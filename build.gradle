@@ -74,7 +74,7 @@ task doJavaDocs(type: Javadoc) {
     title = "${getProjectCommonName()}"
     (options as StandardJavadocDocletOptions).with {
         links = getJavaDocLinks()
-        bottom = "<small><a href=\"${getBuildGITHomeURL()}\" target=\"_blank\">${getProjectCommonName()} - &copy; 2018</a> - <a href=\"${getBuildGITCommitHash()}\" target=\"_blank\">${getBuildModuleVersion()}</a> - <a href=\"mailto:deansjones@gmail.com\">Author: Dean S. Jones</a></small>"
+        bottom = "<div><h2 class=\"title\">&nbsp;<a href=\"${getBuildGITHomeURL()}\" target=\"_blank\">${getProjectCommonName()} - &copy; 2018</a> - <a href=\"${getBuildGITCommitHash()}\" target=\"_blank\">${getBuildModuleVersion()}</a> - <a href=\"mailto:deansjones@gmail.com\">Author: Dean S. Jones</a></h2></div>"
     }
 }
 
@@ -299,47 +299,11 @@ uploadArchives {
 
 def List<String> getJavaDocLinks() {
     def list = []
-    File data = file('groovydoc/GROOVYDOC_LINK_SITES.txt')
+    File data = file('javadoconf/JAVADOC_LINK_SITES.txt')
     if (data.exists()) {
         data.eachLine { line ->
             list << line
         }
     }
     list
-}
-def Map<String, List<String>> getGroovydocLinks() {
-    def lmap = [:]
-    File data = file('groovydoc/GROOVYDOC_LINK_LISTS.txt')
-    if (data.exists()) {
-        data.eachLine { line ->
-            def vals = ((CharSequence) line).tokenize(',')
-            lmap[vals.head()] = vals.tail()
-        }
-    }
-    lmap
-}
-
-task buildGroovydocLinks {
-    doLast {
-        def site = [:]
-        File data = file('groovydoc/GROOVYDOC_LINK_SITES.txt')
-        if (data.exists()) {
-            data.eachLine { line ->
-                site[line] = ((CharSequence) new URL("${line}/package-list").text).tokenize('\n')
-            }
-        }
-        File make = file('groovydoc/GROOVYDOC_LINK_LISTS.txt')
-        if(make.exists()) {
-            make.delete()
-        }
-        make.createNewFile()
-        def save = make.newPrintWriter()
-        site.each { link, list ->
-            def show = "${link}"
-            list.each { line -> show = "${show},${line}" }
-            save.println("${show}")
-        }
-        save.flush()
-        save.close()
-    }
 }
