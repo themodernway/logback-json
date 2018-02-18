@@ -16,14 +16,23 @@
 
 package com.themodernway.logback.json.core.layout;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.TimeZone;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
 
 public class JSONLayout extends JSONLayoutBase<ILoggingEvent>
 {
+    private String                        m_pattern  = "yyyy-MM-dd HH:mm:ss,SSS z";
+
+    private TimeZone                      m_timezone = TimeZone.getTimeZone("GMT");
+
+    private final ThreadLocal<DateFormat> m_format   = ThreadLocal.withInitial(() -> new JSONDateFormat(getDateFormat(), getTimeZone()));
+
     public JSONLayout()
     {
     }
@@ -33,7 +42,7 @@ public class JSONLayout extends JSONLayoutBase<ILoggingEvent>
     {
         final Map<String, Object> target = new LinkedHashMap<String, Object>();
 
-        add(target, "time", true, () -> new Date(event.getTimeStamp()).toString());
+        add(target, "time", true, () -> m_format.get().format(new Date(event.getTimeStamp())));
 
         add(target, "level", true, () -> String.valueOf(event.getLevel()));
 
@@ -44,5 +53,37 @@ public class JSONLayout extends JSONLayoutBase<ILoggingEvent>
         add(target, "state", true, map(() -> event.getMDCPropertyMap()));
 
         return target;
+    }
+
+    public void setDateFormat(final String format)
+    {
+        m_pattern = format;
+    }
+
+    public String getDateFormat()
+    {
+        return m_pattern;
+    }
+
+    public void setTimeZone(final String tz)
+    {
+        m_timezone = TimeZone.getTimeZone(tz);
+    }
+
+    public TimeZone getTimeZone()
+    {
+        return m_timezone;
+    }
+
+    protected static class JSONDateFormat extends SimpleDateFormat
+    {
+        private static final long serialVersionUID = 1L;
+
+        public JSONDateFormat(final String pattern, final TimeZone zone)
+        {
+            super(pattern);
+
+            setTimeZone(zone);
+        }
     }
 }
