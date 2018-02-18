@@ -41,7 +41,7 @@ public class LogbackObjectMapper extends ObjectMapper implements LogbackJSONForm
 
     private static final List<Module> MAPPER_MODULES   = Arrays.asList(new ParameterNamesModule(), new Jdk8Module(), new JavaTimeModule());
 
-    private static final Version      MAPPER_VERSION   = VersionUtil.parseVersion("0.0.1-SNAPSHOT", "com.themodernway", "logback-json-core");
+    private static final Version      MAPPER_VERSION   = VersionUtil.parseVersion("0.0.2-SNAPSHOT", "com.themodernway", "logback-json-core");
 
     public LogbackObjectMapper()
     {
