@@ -35,7 +35,7 @@ import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
  * @since 0.0.1-SNAPSHOT
  */
 
-public class LogbackObjectMapper extends ObjectMapper implements JSONFormatter
+public class LogbackObjectMapper extends ObjectMapper implements LogbackJSONFormatter
 {
     private static final long         serialVersionUID = 1L;
 

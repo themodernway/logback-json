@@ -242,7 +242,6 @@ sourceSets {
 }
 
 dependencies {
-    compile(group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.2')
     compile(group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.9.4')
     compile(group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.4')
     compile(group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.9.4')
@@ -250,6 +249,7 @@ dependencies {
     compile(group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.4')
     compile(group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-xml', version: '2.9.4')
     compile(group: 'com.fasterxml.jackson.module', name: 'jackson-module-parameter-names', version: '2.9.4')
+    compile(group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3')
     testCompile(group: 'org.codehaus.groovy', name: 'groovy-all', version: '2.4.13', classifier: 'indy')
     testCompile(group: 'org.spockframework', name: 'spock-core', version: '1.1-groovy-2.4') {
         exclude(group: 'org.codehaus.groovy', module: 'groovy-all')

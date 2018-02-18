@@ -28,10 +28,19 @@ public class BasicTestsSpecification extends AbstractSpecification
     {
     }
 
-    def "dummy()"()
+    def "dummy(1)"()
     {
         setup:
-        echo "dummy()"
+        echo "dummy(1)"
+
+        expect:
+        true == true
+    }
+
+    def "dummy(2)"()
+    {
+        setup:
+        echo "dummy(2)"
 
         expect:
         true == true

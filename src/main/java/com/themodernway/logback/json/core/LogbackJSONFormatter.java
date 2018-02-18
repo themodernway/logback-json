@@ -16,17 +16,15 @@
 
 package com.themodernway.logback.json.core;
 
-import java.util.function.Supplier;
-
 /**
- * A {@code JSONFormatter} interface formats an object into a JSON string.
+ * A {@code LogbackJSONFormatter} interface formats an object into a JSON string.
  *
  * @author Dean S. Jones
  * @since 0.0.1-SNAPSHOT
  */
 
 @FunctionalInterface
-public interface JSONFormatter
+public interface LogbackJSONFormatter
 {
     /**
      * Converts the specified target into a JSON string.
@@ -37,17 +35,4 @@ public interface JSONFormatter
      */
 
     public String toJSONString(Object target) throws Exception;
-
-    /**
-     * Converts the specified target {@link Supplier Supplier} into a JSON string.
-     *
-     * @param supplier the Supplier of a target to be converted.
-     * @return a JSON String representation of the target.
-     * @throws Exception if there was an error converting the target to a String.
-     */
-
-    default public String toJSONString(final Supplier<?> supplier) throws Exception
-    {
-        return toJSONString(supplier.get());
-    }
 }

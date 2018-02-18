@@ -19,8 +19,7 @@
 <configuration>
 	<statusListener class="ch.qos.logback.core.status.NopStatusListener" />
 	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-		<layout class="ch.qos.logback.classic.PatternLayout">
-			<Pattern>[%d] [%p] [%c] [TEST] - %m%n</Pattern>
+		<layout class="com.themodernway.logback.json.core.layout.JSONLayout">
 		</layout>
 	</appender>
 	<root level="INFO">
