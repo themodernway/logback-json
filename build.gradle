@@ -55,7 +55,7 @@ group = 'com.themodernway'
 task deleteConfigs(type: Delete) {
     FileTree tree = fileTree(dir: "${buildDir}/resources/main")
     tree.each { File file ->
-        delete(file)
+        file.delete()
     }
 }
 
@@ -69,12 +69,12 @@ task filterConfigs(dependsOn: deleteConfigs, type: Copy) {
 task doJavaDocs(type: Javadoc) {
     source = sourceSets.main.allSource
     classpath = sourceSets.main.runtimeClasspath + buildscript.configurations.classpath
-    destinationDir = file("${buildDir}/docs/javadoc")
+    destinationDir = gfile("${buildDir}/docs/javadoc")
     includes = ['com/themodernway/logback/json/core/**']
     title = "${getProjectCommonName()}"
     (options as StandardJavadocDocletOptions).with {
         links = getJavaDocLinks()
-        bottom = "<div><h2 class=\"title\">&nbsp;<a href=\"${getBuildGITHomeURL()}\" target=\"_blank\">${getProjectCommonName()} - &copy; 2018</a> - <a href=\"${getBuildGITCommitHash()}\" target=\"_blank\">${getBuildModuleVersion()}</a> - <a href=\"mailto:deansjones@gmail.com\">Author: Dean S. Jones</a></h2></div>"
+        bottom = "<div><h4 class=\"footer\"><a href=\"${getBuildGITHomeURL()}\" target=\"_blank\">${getProjectCommonName()} - Copyright &copy; 2018, The Modern Way</a> - <a href=\"${getBuildGITCommitHash()}\" target=\"_blank\">${getBuildModuleVersion()}</a> - <a href=\"mailto:deansjones@gmail.com\">Author: Dean S. Jones</a></h4></div>"
     }
 }
 
@@ -107,10 +107,10 @@ jacocoTestReport {
     reports {
         csv {
             enabled true
-            destination file("${buildDir}/reports/jacoco/coverage-${version}.csv")
+            destination gfile("${buildDir}/reports/jacoco/coverage-${version}.csv")
         }
         xml.enabled false
-        html.destination file("${buildDir}/reports/coverage")
+        html.destination gfile("${buildDir}/reports/coverage")
     }
 }
 
@@ -122,7 +122,7 @@ test {
     testLogging.showStandardStreams = true
     jacoco {
         append = false
-        destinationFile = file("${buildDir}/jacoco/testing.exec")
+        destinationFile = gfile("${buildDir}/jacoco/testing.exec")
     }
 }
 
@@ -144,7 +144,7 @@ findbugs {
     ignoreFailures = true
     toolVersion = '3.0.1'
     effort = 'max'
-    excludeFilter = file('config/findbugs/filter.xml')
+    excludeFilter = gfile('config/findbugs/filter.xml')
 }
 
 tasks.withType(FindBugs) {
@@ -157,7 +157,7 @@ tasks.withType(FindBugs) {
 dependencyCheck {
     failOnError = false
     outputDirectory = "${buildDir}/reports/cve"
-    suppressionFile = file('config/cve/suppress.xml')
+    suppressionFile = gfile('config/cve/suppress.xml')
 }
 
 task checkCodeQuality { doLast { println ':checkCodeQuality-done' } }
@@ -220,15 +220,19 @@ def String getBuildGITHomeURL() {
 }
 
 def String getBuildGITCommitHash() {
-    getBuildGITHomeURL() + '/commit/' + Grgit.open(project.file('.')).head().id
+    getBuildGITHomeURL() + '/commit/' + Grgit.open(gfile('.')).head().id
 }
 
 def String getBuildGITCommitUser() {
-    Grgit.open(project.file('.')).head().committer.email
+    Grgit.open(gfile('.')).head().committer.email
 }
 
 def String getBuildGITCommitMessage() {
-    Grgit.open(project.file('.')).head().shortMessage
+    Grgit.open(gfile('.')).head().shortMessage
+}
+
+def File gfile(String name) {
+    project.file(name)
 }
 
 repositories { mavenCentral() }
@@ -298,8 +302,8 @@ uploadArchives {
 }
 
 def List<String> getJavaDocLinks() {
-    def list = []
-    File data = file('javadoconf/JAVADOC_LINK_SITES.txt')
+    List list = []
+    File data = gfile('javadoconf/JAVADOC_LINK_SITES.txt')
     if (data.exists()) {
         data.eachLine { line ->
             list << line
