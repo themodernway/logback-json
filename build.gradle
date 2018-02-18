@@ -212,7 +212,7 @@ def String getBuildUser() {
 }
 
 def String getBuildServerBuild() {
-    System.getenv('BUILD_DISPLAY_NAME') ?: "Command line gradle version ${gradle.gradleVersion}"
+    System.getenv('BUILD_DISPLAY_NAME') ?: "Gradle version ${gradle.gradleVersion}"
 }
 
 def String getBuildGITHomeURL() {
@@ -220,15 +220,15 @@ def String getBuildGITHomeURL() {
 }
 
 def String getBuildGITCommitHash() {
-    ''//getBuildGITHomeURL() + '/commit/' + Grgit.open(project.file('.')).head().id
+    getBuildGITHomeURL() + '/commit/' + Grgit.open(project.file('.')).head().id
 }
 
 def String getBuildGITCommitUser() {
-    ''//Grgit.open(project.file('.')).head().committer.email
+    Grgit.open(project.file('.')).head().committer.email
 }
 
 def String getBuildGITCommitMessage() {
-    ''//Grgit.open(project.file('.')).head().shortMessage
+    Grgit.open(project.file('.')).head().shortMessage
 }
 
 repositories { mavenCentral() }
