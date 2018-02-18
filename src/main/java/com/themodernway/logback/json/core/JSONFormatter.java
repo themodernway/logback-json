@@ -26,7 +26,7 @@ import java.util.function.Supplier;
  */
 
 @FunctionalInterface
-public interface JSONFormatter<T>
+public interface JSONFormatter
 {
     /**
      * Converts the specified target into a JSON string.
@@ -36,7 +36,7 @@ public interface JSONFormatter<T>
      * @throws Exception if there was an error converting the target to a String.
      */
 
-    public String toJSONString(T target) throws Exception;
+    public String toJSONString(Object target) throws Exception;
 
     /**
      * Converts the specified target {@link Supplier Supplier} into a JSON string.
@@ -46,7 +46,7 @@ public interface JSONFormatter<T>
      * @throws Exception if there was an error converting the target to a String.
      */
 
-    default public String toJSONString(final Supplier<T> supplier) throws Exception
+    default public String toJSONString(final Supplier<?> supplier) throws Exception
     {
         return toJSONString(supplier.get());
     }
