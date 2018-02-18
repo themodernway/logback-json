@@ -28,6 +28,13 @@ import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 
+/**
+ * A {@code LogbackObjectMapper} interface formats an object into a JSON string.
+ *
+ * @author Dean S. Jones
+ * @since 0.0.1-SNAPSHOT
+ */
+
 public class LogbackObjectMapper extends ObjectMapper implements JSONFormatter
 {
     private static final long         serialVersionUID = 1L;
