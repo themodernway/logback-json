@@ -18,6 +18,7 @@ package com.themodernway.logback.json.core;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.Version;
@@ -26,7 +27,6 @@ import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 
 /**
  * A {@code LogbackObjectMapper} interface formats an object into a JSON string.
@@ -39,9 +39,9 @@ public class LogbackObjectMapper extends ObjectMapper implements LogbackJSONForm
 {
     private static final long         serialVersionUID = 1L;
 
-    private static final List<Module> MAPPER_MODULES   = Arrays.asList(new ParameterNamesModule(), new Jdk8Module(), new JavaTimeModule());
+    private static final List<Module> MAPPER_MODULES   = Arrays.asList(new Jdk8Module(), new JavaTimeModule());
 
-    private static final Version      MAPPER_VERSION   = VersionUtil.parseVersion("0.0.2-SNAPSHOT", "com.themodernway", "logback-json-core");
+    private static final Version      MAPPER_VERSION   = VersionUtil.parseVersion("0.0.3-SNAPSHOT", "com.themodernway", "logback-json-core");
 
     public LogbackObjectMapper()
     {
@@ -68,7 +68,7 @@ public class LogbackObjectMapper extends ObjectMapper implements LogbackJSONForm
     }
 
     @Override
-    public String toJSONString(final Object target) throws Exception
+    public String toJSONString(final Map<String, Object> target) throws Exception
     {
         return writeValueAsString(target);
     }

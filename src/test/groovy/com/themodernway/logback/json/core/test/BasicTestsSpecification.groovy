@@ -32,6 +32,8 @@ public class BasicTestsSpecification extends AbstractSpecification
     {
         setup:
         echo "dummy(1)"
+        echo "dummy(1)"
+        echo "dummy(1)"
 
         expect:
         true == true
@@ -41,6 +43,17 @@ public class BasicTestsSpecification extends AbstractSpecification
     {
         setup:
         echo "dummy(2)"
+
+        expect:
+        true == true
+    }
+
+    def "dummy(3)"()
+    {
+        setup:
+        echo "dummy(3)"
+
+        logger().error("oops", new NullPointerException("hi"))
 
         expect:
         true == true

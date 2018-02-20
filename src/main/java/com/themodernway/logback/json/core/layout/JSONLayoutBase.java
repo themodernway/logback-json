@@ -17,18 +17,17 @@
 package com.themodernway.logback.json.core.layout;
 
 import java.util.Map;
-import java.util.function.Supplier;
 
 import com.themodernway.logback.json.core.LogbackJSONFormatter;
 import com.themodernway.logback.json.core.LogbackObjectMapper;
 
 import ch.qos.logback.core.LayoutBase;
 
-public abstract class JSONLayoutBase<E> extends LayoutBase<E>
+public abstract class JSONLayoutBase<E> extends LayoutBase<E> implements IJSONCommon
 {
-    private LogbackJSONFormatter             m_formatter;
+    private LogbackJSONFormatter            m_formatter = null;
 
-    private static final LogbackObjectMapper JSON_MAPPER = new LogbackObjectMapper();
+    public static final LogbackObjectMapper JSON_MAPPER = new LogbackObjectMapper();
 
     protected JSONLayoutBase()
     {
@@ -44,50 +43,19 @@ public abstract class JSONLayoutBase<E> extends LayoutBase<E>
         m_formatter = formatter;
     }
 
-    protected final LogbackJSONFormatter formatter()
-    {
-        final LogbackJSONFormatter format = getLogbackJSONFormatter();
-
-        return (null != format ? format : JSON_MAPPER);
-    }
-
-    protected void add(final Map<String, Object> target, final String name, final boolean flag, final Supplier<?> supplier)
-    {
-        if (flag)
-        {
-            final Object valu = supplier.get();
-
-            if (null != valu)
-            {
-                target.put(name, valu);
-            }
-        }
-    }
-
-    protected Supplier<?> map(final Supplier<Map<String, ?>> supplier)
-    {
-        return () -> map(supplier.get());
-    }
-
-    protected Map<String, ?> map(final Map<String, ?> target)
-    {
-        return ((null == target) || (target.isEmpty())) ? null : target;
-    }
-
-    protected void add(final Map<String, Object> target, final String name, final Supplier<?> supplier)
-    {
-        add(target, name, true, supplier);
-    }
-
     @Override
     public String getContentType()
     {
-        return "application/json";
+        return CONTENTTYPE_JSON;
     }
 
     @Override
     public String doLayout(final E event)
     {
+        if (false == isStarted())
+        {
+            return getLayoutLineSeparator();
+        }
         final Map<String, Object> target = convertEvent(event);
 
         if ((null == target) || (target.isEmpty()))
@@ -96,12 +64,19 @@ public abstract class JSONLayoutBase<E> extends LayoutBase<E>
         }
         try
         {
-            return formatter().toJSONString(target) + "\n";
+            return requireNonNullOrElse(getLogbackJSONFormatter(), JSON_MAPPER).toJSONString(target) + getLayoutLineSeparator();
         }
         catch (final Exception e)
         {
-            return target.toString();
+            addError("error converting to JSON.", e);
+
+            return null;
         }
+    }
+
+    public String getLayoutLineSeparator()
+    {
+        return LINE_FEED_STRING;
     }
 
     protected abstract Map<String, Object> convertEvent(final E event);
