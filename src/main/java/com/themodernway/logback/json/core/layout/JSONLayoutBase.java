@@ -25,7 +25,7 @@ import ch.qos.logback.core.LayoutBase;
 
 public abstract class JSONLayoutBase<E> extends LayoutBase<E> implements IJSONCommon
 {
-    private LogbackJSONFormatter            m_formatter = null;
+    private LogbackJSONFormatter            m_formatter;
 
     public static final LogbackObjectMapper JSON_MAPPER = new LogbackObjectMapper();
 

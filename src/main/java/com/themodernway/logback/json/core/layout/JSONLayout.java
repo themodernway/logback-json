@@ -32,7 +32,7 @@ public class JSONLayout extends JSONLayoutBase<ILoggingEvent>
 
     private TimeZone                          m_timezone                = DEFAULT_TIMEZONE;
 
-    private JSONLayoutEnhancer                m_enhancer                = null;
+    private JSONLayoutEnhancer                m_enhancer;
 
     private boolean                           m_show_mdc                = true;
 
