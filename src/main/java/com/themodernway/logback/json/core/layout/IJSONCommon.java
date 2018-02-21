@@ -16,8 +16,10 @@
 
 package com.themodernway.logback.json.core.layout;
 
+import java.net.InetAddress;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.UUID;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
@@ -32,6 +34,23 @@ public interface IJSONCommon
     public static final String   ISO8601_PATTERNZ = "yyyy-MM-dd HH:mm:ss,SSS z";
 
     public static final TimeZone DEFAULT_TIMEZONE = TimeZone.getTimeZone("UTC");
+
+    default public String uuid()
+    {
+        return UUID.randomUUID().toString();
+    }
+
+    default public String getHostName()
+    {
+        try
+        {
+            return InetAddress.getLocalHost().getHostName();
+        }
+        catch (final Exception e)
+        {
+            return "localhost";
+        }
+    }
 
     default public String toTrimOrNull(String string)
     {

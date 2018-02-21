@@ -28,31 +28,31 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 
 public class JSONLayout extends JSONLayoutBase<ILoggingEvent>
 {
-    private String                            m_dpattern               = ISO8601_PATTERNZ;
+    private String                            m_dpattern                = ISO8601_PATTERNZ;
 
-    private TimeZone                          m_timezone               = DEFAULT_TIMEZONE;
+    private TimeZone                          m_timezone                = DEFAULT_TIMEZONE;
 
-    private JSONLayoutEnhancer                m_enhancer               = null;
+    private JSONLayoutEnhancer                m_enhancer                = null;
 
-    private boolean                           m_show_mdc               = false;
+    private boolean                           m_show_mdc                = true;
 
-    private boolean                           m_show_timestamp         = false;
+    private boolean                           m_show_timestamp          = true;
 
-    private boolean                           m_show_exception         = false;
+    private boolean                           m_show_exception          = true;
 
-    private boolean                           m_show_log_level         = false;
+    private boolean                           m_show_log_level          = true;
 
-    private boolean                           m_show_thread_name       = false;
+    private boolean                           m_show_thread_name        = true;
 
-    private boolean                           m_show_logger_name       = false;
+    private boolean                           m_show_logger_name        = true;
 
-    private boolean                           m_show_context_name      = false;
+    private boolean                           m_show_context_name       = true;
 
-    private boolean                           m_show_formatted_message = false;
+    private boolean                           m_show_formatted_message  = true;
 
-    private final ThrowableHandlingConverter  m_proxy_handle_converter = new RootCauseFirstThrowableProxyConverter();
+    private final ThrowableHandlingConverter  m_proxy_handle_converter  = new RootCauseFirstThrowableProxyConverter();
 
-    private final ThreadLocal<JSONDateFormat> m_thformat               = ThreadLocal.withInitial(() -> new JSONDateFormatCached(getDatePattern(), getTimeZone()));
+    private final ThreadLocal<JSONDateFormat> m_threadlocal_date_format = ThreadLocal.withInitial(() -> new JSONDateFormatCached(getDatePattern(), getTimeZone()));
 
     public JSONLayout()
     {
@@ -125,7 +125,7 @@ public class JSONLayout extends JSONLayoutBase<ILoggingEvent>
 
     protected JSONDateFormat getJSONDateFormat()
     {
-        return requireNonNullOrElse(m_thformat.get(), () -> new JSONDateFormat(getDatePattern(), getTimeZone()));
+        return requireNonNullOrElse(m_threadlocal_date_format.get(), () -> new JSONDateFormat(getDatePattern(), getTimeZone()));
     }
 
     public void setShowException(final boolean show)
