@@ -56,21 +56,6 @@ public class JSONLayout extends JSONLayoutBase<ILoggingEvent>
 
     public JSONLayout()
     {
-        setShowTimeStamp(true);
-
-        setShowLogLevel(true);
-
-        setShowThreadName(true);
-
-        setShowLoggerName(true);
-
-        setShowFormattedMessage(true);
-
-        setShowContextName(true);
-
-        setShowMDC(true);
-
-        setShowException(true);
     }
 
     @Override
