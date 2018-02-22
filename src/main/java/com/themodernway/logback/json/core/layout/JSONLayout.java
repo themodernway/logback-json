@@ -88,7 +88,7 @@ public class JSONLayout extends JSONLayoutBase<ILoggingEvent>
         {
             enhance.before(target, event);
         }
-        append(target, "timestamp", getShowTimeStamp(), () -> getJSONDateFormat().format(event.getTimeStamp()));
+        append(target, "timestamp", getShowTimeStamp(), () -> m_threadlocal_date_format.get().format(event.getTimeStamp()));
 
         append(target, "uuid", getShowUUID(), () -> UUID.randomUUID().toString());
 
@@ -111,11 +111,6 @@ public class JSONLayout extends JSONLayoutBase<ILoggingEvent>
             enhance.finish(target, event);
         }
         return target;
-    }
-
-    protected JSONDateFormat getJSONDateFormat()
-    {
-        return requireNonNullOrElse(m_threadlocal_date_format.get(), () -> new JSONDateFormat(getDatePattern(), getTimeZone()));
     }
 
     public void setShowUUID(final boolean show)
