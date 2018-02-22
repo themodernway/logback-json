@@ -21,6 +21,7 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.UUID;
 
 import ch.qos.logback.classic.pattern.RootCauseFirstThrowableProxyConverter;
 import ch.qos.logback.classic.pattern.ThrowableHandlingConverter;
@@ -35,6 +36,8 @@ public class JSONLayout extends JSONLayoutBase<ILoggingEvent>
     private JSONLayoutEnhancer                m_enhancer;
 
     private boolean                           m_show_mdc                = true;
+
+    private boolean                           m_show_uuid               = true;
 
     private boolean                           m_show_timestamp          = true;
 
@@ -87,6 +90,8 @@ public class JSONLayout extends JSONLayoutBase<ILoggingEvent>
         }
         append(target, "timestamp", getShowTimeStamp(), () -> getJSONDateFormat().format(event.getTimeStamp()));
 
+        append(target, "uuid", getShowUUID(), () -> UUID.randomUUID().toString());
+
         append(target, "level", getShowLogLevel(), () -> String.valueOf(event.getLevel()));
 
         append(target, "thread", getShowThreadName(), () -> event.getThreadName());
@@ -111,6 +116,16 @@ public class JSONLayout extends JSONLayoutBase<ILoggingEvent>
     protected JSONDateFormat getJSONDateFormat()
     {
         return requireNonNullOrElse(m_threadlocal_date_format.get(), () -> new JSONDateFormat(getDatePattern(), getTimeZone()));
+    }
+
+    public void setShowUUID(final boolean show)
+    {
+        m_show_uuid = show;
+    }
+
+    public boolean getShowUUID()
+    {
+        return m_show_uuid;
     }
 
     public void setShowException(final boolean show)
