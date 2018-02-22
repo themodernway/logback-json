@@ -16,8 +16,6 @@
 
 package com.themodernway.logback.json.core.layout;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TimeZone;
@@ -29,33 +27,35 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 
 public class JSONLayout extends JSONLayoutBase<ILoggingEvent>
 {
-    private String                            m_dpattern                = ISO8601_PATTERNZ;
+    private String                                  m_dpattern                = ISO8601_PATTERNZ;
 
-    private TimeZone                          m_timezone                = DEFAULT_TIMEZONE;
+    private TimeZone                                m_timezone                = DEFAULT_TIMEZONE;
 
-    private JSONLayoutEnhancer                m_enhancer;
+    private JSONLayoutEnhancer                      m_enhancer;
 
-    private boolean                           m_show_mdc                = true;
+    private boolean                                 m_show_mdc                = true;
 
-    private boolean                           m_show_uuid               = true;
+    private boolean                                 m_show_uuid               = true;
 
-    private boolean                           m_show_timestamp          = true;
+    private boolean                                 m_show_timestamp          = true;
 
-    private boolean                           m_show_exception          = true;
+    private boolean                                 m_show_exception          = true;
 
-    private boolean                           m_show_log_level          = true;
+    private boolean                                 m_show_log_level          = true;
 
-    private boolean                           m_show_thread_name        = true;
+    private boolean                                 m_show_thread_name        = true;
 
-    private boolean                           m_show_logger_name        = true;
+    private boolean                                 m_show_logger_name        = true;
 
-    private boolean                           m_show_context_name       = true;
+    private boolean                                 m_show_context_name       = true;
 
-    private boolean                           m_show_formatted_message  = true;
+    private boolean                                 m_show_formatted_message  = true;
 
-    private final ThrowableHandlingConverter  m_proxy_handle_converter  = new RootCauseFirstThrowableProxyConverter();
+    private String                                  m_timestamp_label         = DEFAULT_TIMESTAMP_LABEL;
 
-    private final ThreadLocal<JSONDateFormat> m_threadlocal_date_format = ThreadLocal.withInitial(() -> new JSONDateFormatCached(getDatePattern(), getTimeZone()));
+    private final ThrowableHandlingConverter        m_proxy_handle_converter  = new RootCauseFirstThrowableProxyConverter();
+
+    private final ThreadLocal<JSONDateFormatCached> m_threadlocal_date_format = ThreadLocal.withInitial(() -> new JSONDateFormatCached(getDatePattern(), getTimeZone()));
 
     public JSONLayout()
     {
@@ -88,7 +88,7 @@ public class JSONLayout extends JSONLayoutBase<ILoggingEvent>
         {
             enhance.before(target, event);
         }
-        append(target, "timestamp", getShowTimeStamp(), () -> m_threadlocal_date_format.get().format(event.getTimeStamp()));
+        append(target, toTrimOrElse(getTimeStampLabel(), DEFAULT_TIMESTAMP_LABEL), getShowTimeStamp(), () -> m_threadlocal_date_format.get().format(event.getTimeStamp()));
 
         append(target, "uuid", getShowUUID(), () -> UUID.randomUUID().toString());
 
@@ -111,6 +111,16 @@ public class JSONLayout extends JSONLayoutBase<ILoggingEvent>
             enhance.finish(target, event);
         }
         return target;
+    }
+
+    public String setTimeStampLabel(final String label)
+    {
+        return m_timestamp_label = label;
+    }
+
+    public String getTimeStampLabel()
+    {
+        return m_timestamp_label;
     }
 
     public void setShowUUID(final boolean show)
@@ -218,6 +228,11 @@ public class JSONLayout extends JSONLayoutBase<ILoggingEvent>
         m_timezone = TimeZone.getTimeZone(tz);
     }
 
+    public TimeZone getTimeZone()
+    {
+        return requireNonNullOrElse(m_timezone, DEFAULT_TIMEZONE);
+    }
+
     public void setEnhancer(final JSONLayoutEnhancer enhancer)
     {
         m_enhancer = enhancer;
@@ -226,51 +241,5 @@ public class JSONLayout extends JSONLayoutBase<ILoggingEvent>
     public JSONLayoutEnhancer getEnhancer()
     {
         return m_enhancer;
-    }
-
-    public TimeZone getTimeZone()
-    {
-        return requireNonNullOrElse(m_timezone, DEFAULT_TIMEZONE);
-    }
-
-    protected static class JSONDateFormat extends SimpleDateFormat
-    {
-        private static final long serialVersionUID = 1L;
-
-        public JSONDateFormat(final String pattern, final TimeZone zone)
-        {
-            super(pattern);
-
-            setTimeZone(zone);
-        }
-
-        public String format(final long time)
-        {
-            return format(new Date(time));
-        }
-    }
-
-    protected static class JSONDateFormatCached extends JSONDateFormat
-    {
-        private static final long serialVersionUID = 1L;
-
-        private transient long    m_last;
-
-        private transient String  m_save;
-
-        public JSONDateFormatCached(final String pattern, final TimeZone zone)
-        {
-            super(pattern, zone);
-        }
-
-        @Override
-        public String format(final long time)
-        {
-            if (time != m_last)
-            {
-                m_save = super.format(m_last = time);
-            }
-            return m_save;
-        }
     }
 }

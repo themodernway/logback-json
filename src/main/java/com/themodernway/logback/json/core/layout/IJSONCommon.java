@@ -25,13 +25,31 @@ import ch.qos.logback.core.CoreConstants;
 
 public interface IJSONCommon
 {
-    public static final String   CONTENTTYPE_JSON = "application/json";
+    public static final String   CONTENTTYPE_JSON                = "application/json";
 
-    public static final String   LINE_FEED_STRING = CoreConstants.LINE_SEPARATOR;
+    public static final String   LINE_FEED_STRING                = CoreConstants.LINE_SEPARATOR;
 
-    public static final String   ISO8601_PATTERNZ = "yyyy-MM-dd HH:mm:ss,SSS z";
+    public static final String   ISO8601_PATTERNZ                = "yyyy-MM-dd HH:mm:ss,SSS z";
 
-    public static final TimeZone DEFAULT_TIMEZONE = TimeZone.getTimeZone("UTC");
+    public static final TimeZone DEFAULT_TIMEZONE                = TimeZone.getTimeZone("UTC");
+
+    public final static String   DEFAULT_MDC_LABEL               = "mdc";
+
+    public final static String   DEFAULT_UUID_LABEL              = "uuid";
+
+    public final static String   DEFAULT_LEVEL_LABEL             = "level";
+
+    public final static String   DEFAULT_EXCEPTION_LABEL         = "exception";
+
+    public final static String   DEFAULT_TIMESTAMP_LABEL         = "timestamp";
+
+    public final static String   DEFAULT_THREAD_NAME_LABEL       = "thread";
+
+    public final static String   DEFAULT_LOGGER_NAME_LABEL       = "logger";
+
+    public final static String   DEFAULT_CONTEXT_NAME_LABEL      = "context";
+
+    public final static String   DEFAULT_FORMATTED_MESSAGE_LABEL = "message";
 
     default public String toTrimOrNull(String string)
     {
@@ -82,10 +100,5 @@ public interface IJSONCommon
     default public void append(final Map<String, Object> target, final String name, final BooleanSupplier flag, final Supplier<?> supplier)
     {
         append(target, name, flag.getAsBoolean(), supplier);
-    }
-
-    default public void append(final Map<String, Object> target, final String name, final Supplier<?> supplier)
-    {
-        append(target, name, true, supplier);
     }
 }
