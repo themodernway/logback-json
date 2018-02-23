@@ -1,5 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!-- 
 /*
  * Copyright (c) 2018, The Modern Way. All rights reserved.
  *
@@ -15,18 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
--->
-<configuration>
-	<statusListener class="ch.qos.logback.core.status.NopStatusListener" />
-	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-		<layout class="com.themodernway.logback.json.core.layout.JSONLayout">
-			<ShowThreadName>false</ShowThreadName>
-			<ShowContextName>false</ShowContextName>
-			<TimeZone>GMT</TimeZone>
-			<MDCLabel>state</MDCLabel>
-		</layout>
-	</appender>
-	<root level="INFO">
-		<appender-ref ref="STDOUT" />
-	</root>
-</configuration>
+
+package com.themodernway.logback.json.core.layout;
+
+import java.util.function.Supplier;
+
+import ch.qos.logback.classic.spi.ILoggingEvent;
+
+public interface JSONThrowableConverter
+{
+    public void start();
+
+    public void stop();
+
+    public boolean isStarted();
+
+    public Supplier<?> supplier(ILoggingEvent event);
+}

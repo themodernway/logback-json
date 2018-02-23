@@ -18,6 +18,7 @@ package com.themodernway.logback.json.core.layout;
 
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.UUID;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
@@ -35,9 +36,9 @@ public interface IJSONCommon
 
     public final static String   DEFAULT_MDC_LABEL               = "mdc";
 
-    public final static String   DEFAULT_UUID_LABEL              = "uuid";
+    public final static String   DEFAULT_UNIQUE_ID_LABEL         = "uuid";
 
-    public final static String   DEFAULT_LEVEL_LABEL             = "level";
+    public final static String   DEFAULT_LOG_LEVEL_LABEL         = "level";
 
     public final static String   DEFAULT_EXCEPTION_LABEL         = "exception";
 
@@ -50,6 +51,31 @@ public interface IJSONCommon
     public final static String   DEFAULT_CONTEXT_NAME_LABEL      = "context";
 
     public final static String   DEFAULT_FORMATTED_MESSAGE_LABEL = "message";
+
+    default public String uuid()
+    {
+        return UUID.randomUUID().toString();
+    }
+
+    default public String toString(final Object valu)
+    {
+        return (null != valu ? valu.toString() : "null");
+    }
+
+    default public String toStringOrNull(final Object valu)
+    {
+        return (null != valu ? valu.toString() : null);
+    }
+
+    default public String toStringOrElse(final Object valu, final String otherwise)
+    {
+        return (null != valu ? valu.toString() : otherwise);
+    }
+
+    default public String toStringOrElse(final Object valu, final Supplier<String> otherwise)
+    {
+        return (null != valu ? valu.toString() : otherwise.get());
+    }
 
     default public String toTrimOrNull(String string)
     {
