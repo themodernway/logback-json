@@ -239,6 +239,7 @@ repositories { mavenCentral() }
 
 sourceSets {
     main { resources { source java } }
+    test { resources { source groovy } }
 }
 
 dependencies {

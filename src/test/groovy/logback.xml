@@ -22,7 +22,7 @@
 			<layout class="com.themodernway.logback.json.core.layout.JSONLayout">
 				<ShowThreadName>false</ShowThreadName>
 				<ShowContextName>false</ShowContextName>
-				<TimeZone>EST</TimeZone>
+				<TimeZone>PST</TimeZone>
 				<MDCLabel>state</MDCLabel>
 				<Pretty>true</Pretty>
 			</layout>
