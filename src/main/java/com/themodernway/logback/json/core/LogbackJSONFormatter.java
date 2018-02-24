@@ -25,9 +25,12 @@ import java.util.Map;
  * @since 0.0.1-SNAPSHOT
  */
 
-@FunctionalInterface
-public interface LogbackJSONFormatter extends IPrettyPrintCapable
+public interface LogbackJSONFormatter
 {
+    public boolean isPretty();
+
+    public void setPretty(final boolean pretty);
+
     /**
      * Converts the specified target into a JSON string.
      *

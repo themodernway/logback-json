@@ -18,13 +18,12 @@ package com.themodernway.logback.json.core.layout;
 
 import java.util.Map;
 
-import com.themodernway.logback.json.core.IPrettyPrintCapable;
 import com.themodernway.logback.json.core.LogbackJSONFormatter;
 import com.themodernway.logback.json.core.LogbackObjectMapper;
 
 import ch.qos.logback.core.LayoutBase;
 
-public abstract class JSONLayoutBase<E> extends LayoutBase<E> implements IJSONCommon, IPrettyPrintCapable
+public abstract class JSONLayoutBase<E> extends LayoutBase<E> implements IJSONCommon
 {
     private boolean                  m_is_pretty;
 
@@ -63,13 +62,11 @@ public abstract class JSONLayoutBase<E> extends LayoutBase<E> implements IJSONCo
         m_formatter = formatter;
     }
 
-    @Override
     public void setPretty(final boolean pretty)
     {
         m_is_pretty = pretty;
     }
 
-    @Override
     public boolean isPretty()
     {
         return m_is_pretty;
