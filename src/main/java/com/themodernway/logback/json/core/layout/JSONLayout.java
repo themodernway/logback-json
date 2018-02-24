@@ -16,7 +16,6 @@
 
 package com.themodernway.logback.json.core.layout;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TimeZone;
 
@@ -38,6 +37,8 @@ public class JSONLayout extends JSONLayoutBase<ILoggingEvent>
 
     private boolean                                 m_show_exception          = true;
 
+    private boolean                                 m_show_arguments          = true;
+
     private boolean                                 m_show_log_level          = true;
 
     private boolean                                 m_show_thread_name        = true;
@@ -56,6 +57,8 @@ public class JSONLayout extends JSONLayoutBase<ILoggingEvent>
 
     private String                                  m_exception_label         = DEFAULT_EXCEPTION_LABEL;
 
+    public String                                   m_arguments_label         = DEFAULT_ARGUMENTS_LABEL;
+
     private String                                  m_log_level_label         = DEFAULT_LOG_LEVEL_LABEL;
 
     private String                                  m_thread_name_label       = DEFAULT_THREAD_NAME_LABEL;
@@ -66,7 +69,7 @@ public class JSONLayout extends JSONLayoutBase<ILoggingEvent>
 
     private String                                  m_formatted_message_label = DEFAULT_FORMATTED_MESSAGE_LABEL;
 
-    private final JSONThrowableConverter            m_proxy_handler_converter = new JSONStringThrowableConverter();
+    private JSONThrowableConverter                  m_jsonthrowable_converter = new JSONListThrowableConverter();
 
     private final ThreadLocal<JSONDateFormatCached> m_threadlocal_date_format = ThreadLocal.withInitial(() -> new JSONDateFormatCached(getDatePattern(), getTimeZone()));
 
@@ -77,7 +80,7 @@ public class JSONLayout extends JSONLayoutBase<ILoggingEvent>
     @Override
     public void start()
     {
-        m_proxy_handler_converter.start();
+        m_jsonthrowable_converter.start();
 
         super.start();
     }
@@ -87,15 +90,15 @@ public class JSONLayout extends JSONLayoutBase<ILoggingEvent>
     {
         super.stop();
 
-        m_proxy_handler_converter.stop();
+        m_jsonthrowable_converter.stop();
     }
 
     @Override
     protected Map<String, Object> convertEvent(final ILoggingEvent event)
     {
-        final JSONLayoutEnhancer enhance = getEnhancer();
+        final Map<String, Object> target = hashmap();
 
-        final Map<String, Object> target = new LinkedHashMap<String, Object>();
+        final JSONLayoutEnhancer enhance = getEnhancer();
 
         if (null != enhance)
         {
@@ -113,17 +116,29 @@ public class JSONLayout extends JSONLayoutBase<ILoggingEvent>
 
         append(target, toTrimOrElse(getFormattedMessageLabel(), DEFAULT_FORMATTED_MESSAGE_LABEL), getShowFormattedMessage(), () -> event.getFormattedMessage());
 
+        append(target, toTrimOrElse(getArgumentsLabel(), DEFAULT_ARGUMENTS_LABEL), getShowArguments(), () -> toList(event.getArgumentArray()));
+
         append(target, toTrimOrElse(getContextNameLabel(), DEFAULT_CONTEXT_NAME_LABEL), getShowContextName(), () -> event.getLoggerContextVO().getName());
 
         append(target, toTrimOrElse(getMDCLabel(), DEFAULT_MDC_LABEL), getShowMDC(), () -> event.getMDCPropertyMap());
 
-        append(target, toTrimOrElse(getExceptionLabel(), DEFAULT_EXCEPTION_LABEL), getShowException() && (null != event.getThrowableProxy()), m_proxy_handler_converter.supplier(event));
+        append(target, toTrimOrElse(getExceptionLabel(), DEFAULT_EXCEPTION_LABEL), getShowException() && (null != event.getThrowableProxy()), m_jsonthrowable_converter.supplier(event));
 
         if (null != enhance)
         {
             enhance.finish(target, event);
         }
         return target;
+    }
+
+    public void setArgumentsLabel(final String label)
+    {
+        m_arguments_label = label;
+    }
+
+    public String getArgumentsLabel()
+    {
+        return m_arguments_label;
     }
 
     public void setExceptionLabel(final String label)
@@ -214,6 +229,16 @@ public class JSONLayout extends JSONLayoutBase<ILoggingEvent>
     public String getLoggerNameLabel()
     {
         return m_logger_name_label;
+    }
+
+    public void setShowArguments(final boolean show)
+    {
+        m_show_arguments = show;
+    }
+
+    public boolean getShowArguments()
+    {
+        return m_show_arguments;
     }
 
     public void setShowUniqueId(final boolean show)
@@ -324,6 +349,16 @@ public class JSONLayout extends JSONLayoutBase<ILoggingEvent>
     public TimeZone getTimeZone()
     {
         return requireNonNullOrElse(m_timezone, DEFAULT_TIMEZONE);
+    }
+
+    public void setThrowableConverter(final JSONThrowableConverter converter)
+    {
+        m_jsonthrowable_converter = requireNonNullOrElse(converter, () -> new JSONListThrowableConverter());
+    }
+
+    public JSONThrowableConverter getThrowableConverter()
+    {
+        return m_jsonthrowable_converter;
     }
 
     public void setEnhancer(final JSONLayoutEnhancer enhancer)

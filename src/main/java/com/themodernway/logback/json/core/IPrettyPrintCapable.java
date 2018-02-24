@@ -16,25 +16,14 @@
 
 package com.themodernway.logback.json.core;
 
-import java.util.Map;
-
-/**
- * A {@code LogbackJSONFormatter} interface formats an object into a JSON string.
- *
- * @author Dean S. Jones
- * @since 0.0.1-SNAPSHOT
- */
-
-@FunctionalInterface
-public interface LogbackJSONFormatter extends IPrettyPrintCapable
+public interface IPrettyPrintCapable
 {
-    /**
-     * Converts the specified target into a JSON string.
-     *
-     * @param target the object to be converted.
-     * @return a JSON String representation of the target.
-     * @throws Exception if there was an error converting the target to a String.
-     */
+    default public void setPretty(final boolean pretty)
+    {
+    }
 
-    public String toJSONString(Map<String, Object> target) throws Exception;
+    default public boolean isPretty()
+    {
+        return false;
+    }
 }

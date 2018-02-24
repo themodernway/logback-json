@@ -16,6 +16,10 @@
 
 package com.themodernway.logback.json.core.layout;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 import java.util.UUID;
@@ -28,7 +32,9 @@ public interface IJSONCommon
 {
     public static final String   CONTENTTYPE_JSON                = "application/json";
 
-    public static final String   LINE_FEED_STRING                = CoreConstants.LINE_SEPARATOR;
+    public static final String   NEWLINE_STRING                  = CoreConstants.LINE_SEPARATOR;
+
+    public static final String   EMPTY_STRING                    = CoreConstants.EMPTY_STRING;
 
     public static final String   ISO8601_PATTERNZ                = "yyyy-MM-dd HH:mm:ss,SSS z";
 
@@ -39,6 +45,8 @@ public interface IJSONCommon
     public final static String   DEFAULT_UNIQUE_ID_LABEL         = "uuid";
 
     public final static String   DEFAULT_LOG_LEVEL_LABEL         = "level";
+
+    public final static String   DEFAULT_ARGUMENTS_LABEL         = "arguments";
 
     public final static String   DEFAULT_EXCEPTION_LABEL         = "exception";
 
@@ -52,9 +60,33 @@ public interface IJSONCommon
 
     public final static String   DEFAULT_FORMATTED_MESSAGE_LABEL = "message";
 
+    default public Supplier<?> nothing()
+    {
+        return () -> null;
+    }
+
+    default public Map<String, Object> hashmap()
+    {
+        return new LinkedHashMap<String, Object>();
+    }
+
+    default public Map<String, Object> hashmap(final int size)
+    {
+        return new LinkedHashMap<String, Object>(size);
+    }
+
     default public String uuid()
     {
         return UUID.randomUUID().toString();
+    }
+
+    default public List<?> toList(final Object[] args)
+    {
+        if (null == args)
+        {
+            return Collections.emptyList();
+        }
+        return Arrays.asList(args);
     }
 
     default public String toString(final Object valu)

@@ -29,6 +29,16 @@ public abstract class AbstractSpecification extends Specification
 
     private boolean     m_logging = true
 
+    public static final void configureLogger(final String location)
+    {
+        LoggingOps.load(location)
+    }
+
+    public static final void configureLogger(Class<?> claz, final String location)
+    {
+        LoggingOps.load(claz, location)
+    }
+
     def setup()
     {
         m_logging = true

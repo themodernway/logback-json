@@ -17,14 +17,16 @@
  */
 -->
 <configuration>
-	<statusListener class="ch.qos.logback.core.status.NopStatusListener" />
 	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-		<layout class="com.themodernway.logback.json.core.layout.JSONLayout">
-			<ShowThreadName>false</ShowThreadName>
-			<ShowContextName>false</ShowContextName>
-			<TimeZone>GMT</TimeZone>
-			<MDCLabel>state</MDCLabel>
-		</layout>
+		<encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+			<layout class="com.themodernway.logback.json.core.layout.JSONLayout">
+				<ShowThreadName>false</ShowThreadName>
+				<ShowContextName>false</ShowContextName>
+				<TimeZone>EST</TimeZone>
+				<MDCLabel>state</MDCLabel>
+				<Pretty>true</Pretty>
+			</layout>
+		</encoder>
 	</appender>
 	<root level="INFO">
 		<appender-ref ref="STDOUT" />

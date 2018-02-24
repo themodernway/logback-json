@@ -18,19 +18,39 @@ package com.themodernway.logback.json.core.layout;
 
 import java.util.Map;
 
+import com.themodernway.logback.json.core.IPrettyPrintCapable;
 import com.themodernway.logback.json.core.LogbackJSONFormatter;
 import com.themodernway.logback.json.core.LogbackObjectMapper;
 
 import ch.qos.logback.core.LayoutBase;
 
-public abstract class JSONLayoutBase<E> extends LayoutBase<E> implements IJSONCommon
+public abstract class JSONLayoutBase<E> extends LayoutBase<E> implements IJSONCommon, IPrettyPrintCapable
 {
-    private LogbackJSONFormatter            m_formatter;
+    private boolean                  m_is_pretty;
 
-    public static final LogbackObjectMapper JSON_MAPPER = new LogbackObjectMapper();
+    private String                   m_line_feed;
+
+    private LogbackJSONFormatter     m_formatter;
+
+    public final LogbackObjectMapper m_objmapper = new LogbackObjectMapper();
 
     protected JSONLayoutBase()
     {
+        setLineFeed(NEWLINE_STRING);
+    }
+
+    @Override
+    public void start()
+    {
+        requireNonNullOrElse(getLogbackJSONFormatter(), m_objmapper).setPretty(isPretty());
+
+        super.start();
+    }
+
+    @Override
+    public void stop()
+    {
+        super.stop();
     }
 
     public LogbackJSONFormatter getLogbackJSONFormatter()
@@ -44,6 +64,18 @@ public abstract class JSONLayoutBase<E> extends LayoutBase<E> implements IJSONCo
     }
 
     @Override
+    public void setPretty(final boolean pretty)
+    {
+        m_is_pretty = pretty;
+    }
+
+    @Override
+    public boolean isPretty()
+    {
+        return m_is_pretty;
+    }
+
+    @Override
     public String getContentType()
     {
         return CONTENTTYPE_JSON;
@@ -54,29 +86,34 @@ public abstract class JSONLayoutBase<E> extends LayoutBase<E> implements IJSONCo
     {
         if (false == isStarted())
         {
-            return getLayoutLineSeparator();
+            return EMPTY_STRING;
         }
         final Map<String, Object> target = convertEvent(event);
 
         if ((null == target) || (target.isEmpty()))
         {
-            return null;
+            return EMPTY_STRING;
         }
         try
         {
-            return requireNonNullOrElse(getLogbackJSONFormatter(), JSON_MAPPER).toJSONString(target) + getLayoutLineSeparator();
+            return requireNonNullOrElse(getLogbackJSONFormatter(), m_objmapper).toJSONString(target) + requireNonNullOrElse(getLineFeed(), NEWLINE_STRING);
         }
         catch (final Exception e)
         {
             addError("error converting to JSON.", e);
 
-            return null;
+            return EMPTY_STRING;
         }
     }
 
-    public String getLayoutLineSeparator()
+    public void setLineFeed(final String line)
     {
-        return LINE_FEED_STRING;
+        m_line_feed = line;
+    }
+
+    public String getLineFeed()
+    {
+        return m_line_feed;
     }
 
     protected abstract Map<String, Object> convertEvent(final E event);

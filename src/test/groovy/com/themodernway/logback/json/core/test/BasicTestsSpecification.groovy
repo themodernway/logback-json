@@ -22,6 +22,7 @@ public class BasicTestsSpecification extends AbstractSpecification
 {
     def setupSpec()
     {
+        //configureLogger("/com/themodernway/logback/json/core/test/BasicTestsConfig.xml")
     }
 
     def cleanupSpec()
@@ -54,6 +55,17 @@ public class BasicTestsSpecification extends AbstractSpecification
         echo "dummy(3)"
 
         logger().error("oops", new NullPointerException("hi"))
+
+        expect:
+        true == true
+    }
+
+    def "dummy(4)"()
+    {
+        setup:
+        echo "dummy(4)"
+
+        logger().info("hello", 6, 'Dean', [name: 'Jones'])
 
         expect:
         true == true

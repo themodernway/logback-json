@@ -22,9 +22,12 @@ import java.util.Map;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.Version;
+import com.fasterxml.jackson.core.util.DefaultIndenter;
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.core.util.VersionUtil;
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
@@ -37,20 +40,42 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 public class LogbackObjectMapper extends ObjectMapper implements LogbackJSONFormatter
 {
-    private static final long         serialVersionUID = 1L;
+    private static final long                serialVersionUID = 1L;
 
-    private static final List<Module> MAPPER_MODULES   = Arrays.asList(new Jdk8Module(), new JavaTimeModule());
+    private static final List<Module>        MAPPER_MODULES   = Arrays.asList(new Jdk8Module(), new JavaTimeModule());
 
-    private static final Version      MAPPER_VERSION   = VersionUtil.parseVersion("0.0.5-SNAPSHOT", "com.themodernway", "logback-json-core");
+    private static final Version             MAPPER_VERSION   = VersionUtil.parseVersion("0.0.6-SNAPSHOT", "com.themodernway", "logback-json-core");
+
+    public static final DefaultPrettyPrinter PRETTY           = PRETTY("    ");
+
+    public static final DefaultPrettyPrinter PRETTY(final String indent)
+    {
+        return new DefaultPrettyPrinter().withArrayIndenter(new DefaultIndenter().withIndent(indent)).withObjectIndenter(new DefaultIndenter().withIndent(indent));
+    }
 
     public LogbackObjectMapper()
     {
-        registerModules(MAPPER_MODULES).enable(JsonGenerator.Feature.ESCAPE_NON_ASCII);
+        registerModules(MAPPER_MODULES).enable(JsonGenerator.Feature.ESCAPE_NON_ASCII).setDefaultPrettyPrinter(PRETTY);
     }
 
     protected LogbackObjectMapper(final LogbackObjectMapper parent)
     {
         super(parent);
+    }
+
+    @Override
+    public void setPretty(final boolean pretty)
+    {
+        if (pretty != isPretty())
+        {
+            configure(SerializationFeature.INDENT_OUTPUT, pretty);
+        }
+    }
+
+    @Override
+    public boolean isPretty()
+    {
+        return isEnabled(SerializationFeature.INDENT_OUTPUT);
     }
 
     @Override
