@@ -46,7 +46,7 @@ public class LogbackObjectMapper extends ObjectMapper implements LogbackJSONForm
 
     private static final Version             MAPPER_VERSION   = VersionUtil.parseVersion("0.0.8-SNAPSHOT", "com.themodernway", "logback-json-core");
 
-    public static final DefaultPrettyPrinter PRETTY           = PRETTY("    ");
+    public static final DefaultPrettyPrinter PRETTY           = PRETTY("  ");
 
     public static final DefaultPrettyPrinter PRETTY(final String indent)
     {
