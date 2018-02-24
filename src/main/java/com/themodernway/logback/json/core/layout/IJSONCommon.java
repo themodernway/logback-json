@@ -18,7 +18,6 @@ package com.themodernway.logback.json.core.layout;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
@@ -56,6 +55,8 @@ public interface IJSONCommon
 
     public final static String   DEFAULT_LOGGER_NAME_LABEL       = "logger";
 
+    public final static String   DEFAULT_RAW_MESSAGE_LABEL       = "raw_message";
+
     public final static String   DEFAULT_CONTEXT_NAME_LABEL      = "context";
 
     public final static String   DEFAULT_FORMATTED_MESSAGE_LABEL = "message";
@@ -63,16 +64,6 @@ public interface IJSONCommon
     default public Supplier<?> nothing()
     {
         return () -> null;
-    }
-
-    default public Map<String, Object> hashmap()
-    {
-        return new LinkedHashMap<String, Object>();
-    }
-
-    default public Map<String, Object> hashmap(final int size)
-    {
-        return new LinkedHashMap<String, Object>(size);
     }
 
     default public String uuid()

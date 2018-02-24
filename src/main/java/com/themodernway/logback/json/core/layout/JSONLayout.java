@@ -16,6 +16,7 @@
 
 package com.themodernway.logback.json.core.layout;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TimeZone;
 
@@ -41,6 +42,8 @@ public class JSONLayout extends JSONLayoutBase<ILoggingEvent>
 
     private boolean                                 m_show_log_level          = true;
 
+    private boolean                                 m_show_raw_message        = true;
+
     private boolean                                 m_show_thread_name        = true;
 
     private boolean                                 m_show_logger_name        = true;
@@ -60,6 +63,8 @@ public class JSONLayout extends JSONLayoutBase<ILoggingEvent>
     public String                                   m_arguments_label         = DEFAULT_ARGUMENTS_LABEL;
 
     private String                                  m_log_level_label         = DEFAULT_LOG_LEVEL_LABEL;
+
+    private String                                  m_raw_message_label       = DEFAULT_RAW_MESSAGE_LABEL;
 
     private String                                  m_thread_name_label       = DEFAULT_THREAD_NAME_LABEL;
 
@@ -96,9 +101,9 @@ public class JSONLayout extends JSONLayoutBase<ILoggingEvent>
     @Override
     protected Map<String, Object> convertEvent(final ILoggingEvent event)
     {
-        final Map<String, Object> target = hashmap();
-
         final JSONLayoutEnhancer enhance = getEnhancer();
+
+        final Map<String, Object> target = new LinkedHashMap<String, Object>();
 
         if (null != enhance)
         {
@@ -116,6 +121,8 @@ public class JSONLayout extends JSONLayoutBase<ILoggingEvent>
 
         append(target, toTrimOrElse(getFormattedMessageLabel(), DEFAULT_FORMATTED_MESSAGE_LABEL), getShowFormattedMessage(), () -> event.getFormattedMessage());
 
+        append(target, toTrimOrElse(getRawMessageLabel(), DEFAULT_RAW_MESSAGE_LABEL), getShowRawMessage(), () -> event.getMessage());
+
         append(target, toTrimOrElse(getArgumentsLabel(), DEFAULT_ARGUMENTS_LABEL), getShowArguments(), () -> toList(event.getArgumentArray()));
 
         append(target, toTrimOrElse(getContextNameLabel(), DEFAULT_CONTEXT_NAME_LABEL), getShowContextName(), () -> event.getLoggerContextVO().getName());
@@ -129,6 +136,16 @@ public class JSONLayout extends JSONLayoutBase<ILoggingEvent>
             enhance.finish(target, event);
         }
         return target;
+    }
+
+    public void setRawMessageLabel(final String label)
+    {
+        m_raw_message_label = label;
+    }
+
+    public String getRawMessageLabel()
+    {
+        return m_raw_message_label;
     }
 
     public void setArgumentsLabel(final String label)
@@ -229,6 +246,16 @@ public class JSONLayout extends JSONLayoutBase<ILoggingEvent>
     public String getLoggerNameLabel()
     {
         return m_logger_name_label;
+    }
+
+    public void setShowRawMessage(final boolean show)
+    {
+        m_show_raw_message = show;
+    }
+
+    public boolean getShowRawMessage()
+    {
+        return m_show_raw_message;
     }
 
     public void setShowArguments(final boolean show)
