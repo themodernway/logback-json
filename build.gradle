@@ -48,7 +48,7 @@ sourceCompatibility = 1.8
 
 targetCompatibility = 1.8
 
-version = '2.0.1-SNAPSHOT'
+version = '2.0.2-SNAPSHOT'
 
 group = 'com.themodernway'
 
@@ -67,10 +67,10 @@ task filterConfigs(dependsOn: deleteConfigs, type: Copy) {
 }
 
 task doJavaDocs(type: Javadoc) {
-    source = sourceSets.main.allSource
+    source = sourceSets.main.allJava
     classpath = sourceSets.main.runtimeClasspath + buildscript.configurations.classpath
     destinationDir = gfile("${buildDir}/docs/javadoc")
-    includes = ['com/themodernway/logback/json/core/**']
+    includes = ['com/themodernway/logback/json/core/**.java']
     title = "${getProjectCommonName()}"
     (options as StandardJavadocDocletOptions).with {
         links = getJavaDocLinks()
