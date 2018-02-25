@@ -37,7 +37,7 @@ import com.themodernway.logback.json.core.IJSONFormatter;
  * A {@code CoreJSONFormatter} interface formats an object into a JSON string.
  *
  * @author Dean S. Jones
- * @since 0.0.1-SNAPSHOT
+ * @since 2.0.0-SNAPSHOT
  */
 
 public class CoreJSONFormatter extends ObjectMapper implements IJSONFormatter, IJSONCommon
@@ -46,7 +46,7 @@ public class CoreJSONFormatter extends ObjectMapper implements IJSONFormatter, I
 
     private static final List<Module>        MAPPER_MODULES   = Arrays.asList(new Jdk8Module(), new JavaTimeModule());
 
-    private static final Version             MAPPER_VERSION   = VersionUtil.parseVersion("0.1.0-SNAPSHOT", "com.themodernway", "logback-json-core");
+    private static final Version             MAPPER_VERSION   = VersionUtil.parseVersion("2.0.0-SNAPSHOT", "com.themodernway", "logback-json-core");
 
     public static final DefaultPrettyPrinter PRETTY           = PRETTY(JSON_INDENT_VALUE);
 
