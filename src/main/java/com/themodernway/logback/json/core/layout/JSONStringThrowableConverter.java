@@ -18,11 +18,14 @@ package com.themodernway.logback.json.core.layout;
 
 import java.util.function.Supplier;
 
+import com.themodernway.logback.json.core.IJSONCommon;
+import com.themodernway.logback.json.core.IJSONThrowableConverter;
+
 import ch.qos.logback.classic.pattern.RootCauseFirstThrowableProxyConverter;
 import ch.qos.logback.classic.pattern.ThrowableHandlingConverter;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 
-public class JSONStringThrowableConverter implements JSONThrowableConverter, IJSONCommon
+public class JSONStringThrowableConverter implements IJSONThrowableConverter, IJSONCommon
 {
     private final ThrowableHandlingConverter m_proxy_handler_converter = new RootCauseFirstThrowableProxyConverter();
 

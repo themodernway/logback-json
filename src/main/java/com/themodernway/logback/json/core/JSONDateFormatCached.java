@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.themodernway.logback.json.core.layout;
+package com.themodernway.logback.json.core;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

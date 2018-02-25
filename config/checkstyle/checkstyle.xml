@@ -5,15 +5,15 @@
     "http://www.puppycrawl.com/dtds/configuration_1_1.dtd">
 
 <module name="Checker">
-    <module name="TreeWalker">
-        <module name="MemberName">
-            <property name="format" value="^m_[a-zA-Z0-9_]*$"/>
-        </module>
-        <module name="EmptyBlock"/>
-        <module name="EmptyLineSeparator">
-    		<property name="allowNoEmptyLineBetweenFields" value="true"/>
-    		<property name="allowMultipleEmptyLinesInsideClassMembers" value="true"/>
+	<module name="TreeWalker">
+		<module name="MemberName">
+			<property name="format" value="^m_[a-zA-Z0-9_]*$" />
 		</module>
-    </module>
-    <module name="Translation"/>
+		<module name="EmptyBlock" />
+		<module name="EmptyLineSeparator">
+			<property name="allowNoEmptyLineBetweenFields" value="true" />
+			<property name="allowMultipleEmptyLinesInsideClassMembers" value="true" />
+		</module>
+	</module>
+	<module name="Translation" />
 </module>

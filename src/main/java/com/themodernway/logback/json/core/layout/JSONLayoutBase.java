@@ -18,20 +18,37 @@ package com.themodernway.logback.json.core.layout;
 
 import java.util.Map;
 
-import com.themodernway.logback.json.core.LogbackJSONFormatter;
-import com.themodernway.logback.json.core.LogbackObjectMapper;
+import com.themodernway.logback.json.core.IJSONFormatter;
 
 import ch.qos.logback.core.LayoutBase;
 
-public abstract class JSONLayoutBase<E> extends LayoutBase<E> implements IJSONCommon
+public abstract class JSONLayoutBase<E> extends LayoutBase<E> implements IJSONLayout<E>
 {
-    private boolean                  m_is_pretty;
+    private boolean                    m_is_pretty;
 
-    private String                   m_line_feed;
+    private String                     m_line_feed;
 
-    private LogbackJSONFormatter     m_formatter;
+    private IJSONFormatter             m_formatter;
 
-    public final LogbackObjectMapper m_objmapper = new LogbackObjectMapper();
+    private static final IJSONFormatter FORMAT_NONE = new IJSONFormatter()
+    {
+        @Override
+        public boolean isPretty()
+        {
+            return false;
+        }
+
+        @Override
+        public void setPretty(final boolean pretty)
+        {
+        }
+
+        @Override
+        public String toJSONString(final Map<String, Object> target) throws Exception
+        {
+            return EMPTY_STRING;
+        }
+    };
 
     protected JSONLayoutBase()
     {
@@ -41,7 +58,7 @@ public abstract class JSONLayoutBase<E> extends LayoutBase<E> implements IJSONCo
     @Override
     public void start()
     {
-        requireNonNullOrElse(getLogbackJSONFormatter(), m_objmapper).setPretty(isPretty());
+        requireNonNullOrElse(getJSONFormatter(), FORMAT_NONE).setPretty(isPretty());
 
         super.start();
     }
@@ -52,12 +69,13 @@ public abstract class JSONLayoutBase<E> extends LayoutBase<E> implements IJSONCo
         super.stop();
     }
 
-    public LogbackJSONFormatter getLogbackJSONFormatter()
+    @Override
+    public IJSONFormatter getJSONFormatter()
     {
         return m_formatter;
     }
 
-    public void setLogbackJSONFormatter(final LogbackJSONFormatter formatter)
+    public void setJSONFormatter(final IJSONFormatter formatter)
     {
         m_formatter = formatter;
     }
@@ -67,6 +85,7 @@ public abstract class JSONLayoutBase<E> extends LayoutBase<E> implements IJSONCo
         m_is_pretty = pretty;
     }
 
+    @Override
     public boolean isPretty()
     {
         return m_is_pretty;
@@ -75,7 +94,7 @@ public abstract class JSONLayoutBase<E> extends LayoutBase<E> implements IJSONCo
     @Override
     public String getContentType()
     {
-        return CONTENTTYPE_JSON;
+        return CONTENT_TYPE_JSON;
     }
 
     @Override
@@ -93,7 +112,7 @@ public abstract class JSONLayoutBase<E> extends LayoutBase<E> implements IJSONCo
         }
         try
         {
-            return requireNonNullOrElse(getLogbackJSONFormatter(), m_objmapper).toJSONString(target) + requireNonNullOrElse(getLineFeed(), NEWLINE_STRING);
+            return requireNonNullOrElse(getJSONFormatter(), FORMAT_NONE).toJSONString(target) + requireNonNullOrElse(getLineFeed(), NEWLINE_STRING);
         }
         catch (final Exception e)
         {
@@ -108,10 +127,9 @@ public abstract class JSONLayoutBase<E> extends LayoutBase<E> implements IJSONCo
         m_line_feed = line;
     }
 
+    @Override
     public String getLineFeed()
     {
         return m_line_feed;
     }
-
-    protected abstract Map<String, Object> convertEvent(final E event);
 }

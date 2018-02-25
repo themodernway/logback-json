@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.themodernway.logback.json.core;
+package com.themodernway.logback.json.core.test.util;
 
 import java.util.Arrays;
 import java.util.List;
@@ -30,35 +30,37 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.themodernway.logback.json.core.IJSONCommon;
+import com.themodernway.logback.json.core.IJSONFormatter;
 
 /**
- * A {@code LogbackObjectMapper} interface formats an object into a JSON string.
+ * A {@code CoreJSONFormatter} interface formats an object into a JSON string.
  *
  * @author Dean S. Jones
  * @since 0.0.1-SNAPSHOT
  */
 
-public class LogbackObjectMapper extends ObjectMapper implements LogbackJSONFormatter
+public class CoreJSONFormatter extends ObjectMapper implements IJSONFormatter, IJSONCommon
 {
     private static final long                serialVersionUID = 1L;
 
     private static final List<Module>        MAPPER_MODULES   = Arrays.asList(new Jdk8Module(), new JavaTimeModule());
 
-    private static final Version             MAPPER_VERSION   = VersionUtil.parseVersion("0.0.8-SNAPSHOT", "com.themodernway", "logback-json-core");
+    private static final Version             MAPPER_VERSION   = VersionUtil.parseVersion("0.1.0-SNAPSHOT", "com.themodernway", "logback-json-core");
 
-    public static final DefaultPrettyPrinter PRETTY           = PRETTY("  ");
+    public static final DefaultPrettyPrinter PRETTY           = PRETTY(JSON_INDENT_VALUE);
 
     public static final DefaultPrettyPrinter PRETTY(final String indent)
     {
         return new DefaultPrettyPrinter().withArrayIndenter(new DefaultIndenter().withIndent(indent)).withObjectIndenter(new DefaultIndenter().withIndent(indent));
     }
 
-    public LogbackObjectMapper()
+    public CoreJSONFormatter()
     {
         registerModules(MAPPER_MODULES).enable(JsonGenerator.Feature.ESCAPE_NON_ASCII).setDefaultPrettyPrinter(PRETTY);
     }
 
-    protected LogbackObjectMapper(final LogbackObjectMapper parent)
+    protected CoreJSONFormatter(final CoreJSONFormatter parent)
     {
         super(parent);
     }
@@ -85,11 +87,11 @@ public class LogbackObjectMapper extends ObjectMapper implements LogbackJSONForm
     }
 
     @Override
-    public LogbackObjectMapper copy()
+    public CoreJSONFormatter copy()
     {
-        _checkInvalidCopy(LogbackObjectMapper.class);
+        _checkInvalidCopy(CoreJSONFormatter.class);
 
-        return new LogbackObjectMapper(this);
+        return new CoreJSONFormatter(this);
     }
 
     @Override

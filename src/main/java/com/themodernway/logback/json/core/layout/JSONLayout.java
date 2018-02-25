@@ -20,6 +20,9 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TimeZone;
 
+import com.themodernway.logback.json.core.IJSONThrowableConverter;
+import com.themodernway.logback.json.core.JSONDateFormatCached;
+
 import ch.qos.logback.classic.spi.ILoggingEvent;
 
 public class JSONLayout extends JSONLayoutBase<ILoggingEvent>
@@ -60,7 +63,7 @@ public class JSONLayout extends JSONLayoutBase<ILoggingEvent>
 
     private String                                  m_exception_label         = DEFAULT_EXCEPTION_LABEL;
 
-    public String                                   m_arguments_label         = DEFAULT_ARGUMENTS_LABEL;
+    private String                                  m_arguments_label         = DEFAULT_ARGUMENTS_LABEL;
 
     private String                                  m_log_level_label         = DEFAULT_LOG_LEVEL_LABEL;
 
@@ -74,7 +77,7 @@ public class JSONLayout extends JSONLayoutBase<ILoggingEvent>
 
     private String                                  m_formatted_message_label = DEFAULT_FORMATTED_MESSAGE_LABEL;
 
-    private JSONThrowableConverter                  m_jsonthrowable_converter = new JSONListThrowableConverter();
+    private IJSONThrowableConverter                 m_jsonthrowable_converter = new JSONListThrowableConverter();
 
     private final ThreadLocal<JSONDateFormatCached> m_threadlocal_date_format = ThreadLocal.withInitial(() -> new JSONDateFormatCached(getDatePattern(), getTimeZone()));
 
@@ -85,8 +88,12 @@ public class JSONLayout extends JSONLayoutBase<ILoggingEvent>
     @Override
     public void start()
     {
-        m_jsonthrowable_converter.start();
+        final IJSONThrowableConverter converter = getJSONThrowableConverter();
 
+        if (null != converter)
+        {
+            converter.start();
+        }
         super.start();
     }
 
@@ -95,47 +102,58 @@ public class JSONLayout extends JSONLayoutBase<ILoggingEvent>
     {
         super.stop();
 
-        m_jsonthrowable_converter.stop();
+        final IJSONThrowableConverter converter = getJSONThrowableConverter();
+
+        if (null != converter)
+        {
+            converter.stop();
+        }
     }
 
     @Override
-    protected Map<String, Object> convertEvent(final ILoggingEvent event)
+    public Map<String, Object> convertEvent(final ILoggingEvent event)
     {
-        final JSONLayoutEnhancer enhance = getEnhancer();
+        final JSONLayoutEnhancer enhance = getJSONLayoutEnhancer();
 
         final Map<String, Object> target = new LinkedHashMap<String, Object>();
 
         if (null != enhance)
         {
-            enhance.before(target, event);
+            enhance.before(target, this, event);
         }
-        append(target, toTrimOrElse(getTimeStampLabel(), DEFAULT_TIMESTAMP_LABEL), getShowTimeStamp(), () -> m_threadlocal_date_format.get().format(event.getTimeStamp()));
+        append(target, () -> toTrimOrElse(getTimeStampLabel(), DEFAULT_TIMESTAMP_LABEL), getShowTimeStamp(), () -> getJSONDateFormatCached().format(event.getTimeStamp()));
 
-        append(target, toTrimOrElse(getUniqueIdLabel(), DEFAULT_UNIQUE_ID_LABEL), getShowUniqueId(), () -> uuid());
+        append(target, () -> toTrimOrElse(getUniqueIdLabel(), DEFAULT_UNIQUE_ID_LABEL), getShowUniqueId(), () -> uuid());
 
-        append(target, toTrimOrElse(getLogLevelLabel(), DEFAULT_LOG_LEVEL_LABEL), getShowLogLevel(), () -> toString(event.getLevel()));
+        append(target, () -> toTrimOrElse(getLogLevelLabel(), DEFAULT_LOG_LEVEL_LABEL), getShowLogLevel(), () -> toString(event.getLevel()));
 
-        append(target, toTrimOrElse(getThreadNameLabel(), DEFAULT_THREAD_NAME_LABEL), getShowThreadName(), () -> event.getThreadName());
+        append(target, () -> toTrimOrElse(getThreadNameLabel(), DEFAULT_THREAD_NAME_LABEL), getShowThreadName(), () -> event.getThreadName());
 
-        append(target, toTrimOrElse(getLoggerNameLabel(), DEFAULT_LOGGER_NAME_LABEL), getShowLoggerName(), () -> event.getLoggerName());
+        append(target, () -> toTrimOrElse(getLoggerNameLabel(), DEFAULT_LOGGER_NAME_LABEL), getShowLoggerName(), () -> event.getLoggerName());
 
-        append(target, toTrimOrElse(getFormattedMessageLabel(), DEFAULT_FORMATTED_MESSAGE_LABEL), getShowFormattedMessage(), () -> event.getFormattedMessage());
+        append(target, () -> toTrimOrElse(getFormattedMessageLabel(), DEFAULT_FORMATTED_MESSAGE_LABEL), getShowFormattedMessage(), () -> event.getFormattedMessage());
 
-        append(target, toTrimOrElse(getRawMessageLabel(), DEFAULT_RAW_MESSAGE_LABEL), getShowRawMessage(), () -> event.getMessage());
+        append(target, () -> toTrimOrElse(getRawMessageLabel(), DEFAULT_RAW_MESSAGE_LABEL), getShowRawMessage(), () -> event.getMessage());
 
-        append(target, toTrimOrElse(getArgumentsLabel(), DEFAULT_ARGUMENTS_LABEL), getShowArguments(), () -> toList(event.getArgumentArray()));
+        append(target, () -> toTrimOrElse(getArgumentsLabel(), DEFAULT_ARGUMENTS_LABEL), getShowArguments(), () -> asList(true, event.getArgumentArray()));
 
-        append(target, toTrimOrElse(getContextNameLabel(), DEFAULT_CONTEXT_NAME_LABEL), getShowContextName(), () -> event.getLoggerContextVO().getName());
+        append(target, () -> toTrimOrElse(getContextNameLabel(), DEFAULT_CONTEXT_NAME_LABEL), getShowContextName(), () -> event.getLoggerContextVO().getName());
 
-        append(target, toTrimOrElse(getMDCLabel(), DEFAULT_MDC_LABEL), getShowMDC(), () -> event.getMDCPropertyMap());
+        append(target, () -> toTrimOrElse(getMDCLabel(), DEFAULT_MDC_LABEL), getShowMDC(), () -> event.getMDCPropertyMap());
 
-        append(target, toTrimOrElse(getExceptionLabel(), DEFAULT_EXCEPTION_LABEL), getShowException() && (null != event.getThrowableProxy()), m_jsonthrowable_converter.supplier(event));
+        append(target, () -> toTrimOrElse(getExceptionLabel(), DEFAULT_EXCEPTION_LABEL), getShowException() && (null != event.getThrowableProxy()), requireNonNullOrElse(getJSONThrowableConverter(), () -> new JSONListThrowableConverter()).supplier(event));
 
         if (null != enhance)
         {
-            enhance.finish(target, event);
+            enhance.finish(target, this, event);
         }
         return target;
+    }
+
+    @Override
+    public JSONDateFormatCached getJSONDateFormatCached()
+    {
+        return m_threadlocal_date_format.get();
     }
 
     public void setRawMessageLabel(final String label)
@@ -143,6 +161,7 @@ public class JSONLayout extends JSONLayoutBase<ILoggingEvent>
         m_raw_message_label = label;
     }
 
+    @Override
     public String getRawMessageLabel()
     {
         return m_raw_message_label;
@@ -153,6 +172,7 @@ public class JSONLayout extends JSONLayoutBase<ILoggingEvent>
         m_arguments_label = label;
     }
 
+    @Override
     public String getArgumentsLabel()
     {
         return m_arguments_label;
@@ -163,6 +183,7 @@ public class JSONLayout extends JSONLayoutBase<ILoggingEvent>
         m_exception_label = label;
     }
 
+    @Override
     public String getExceptionLabel()
     {
         return m_exception_label;
@@ -173,6 +194,7 @@ public class JSONLayout extends JSONLayoutBase<ILoggingEvent>
         m_mdc_label = label;
     }
 
+    @Override
     public String getMDCLabel()
     {
         return m_mdc_label;
@@ -183,6 +205,7 @@ public class JSONLayout extends JSONLayoutBase<ILoggingEvent>
         m_context_name_label = label;
     }
 
+    @Override
     public String getContextNameLabel()
     {
         return m_context_name_label;
@@ -193,6 +216,7 @@ public class JSONLayout extends JSONLayoutBase<ILoggingEvent>
         m_formatted_message_label = label;
     }
 
+    @Override
     public String getFormattedMessageLabel()
     {
         return m_formatted_message_label;
@@ -203,6 +227,7 @@ public class JSONLayout extends JSONLayoutBase<ILoggingEvent>
         m_timestamp_label = label;
     }
 
+    @Override
     public String getTimeStampLabel()
     {
         return m_timestamp_label;
@@ -213,6 +238,7 @@ public class JSONLayout extends JSONLayoutBase<ILoggingEvent>
         m_unique_id_label = label;
     }
 
+    @Override
     public String getUniqueIdLabel()
     {
         return m_unique_id_label;
@@ -223,6 +249,7 @@ public class JSONLayout extends JSONLayoutBase<ILoggingEvent>
         m_log_level_label = label;
     }
 
+    @Override
     public String getLogLevelLabel()
     {
         return m_log_level_label;
@@ -233,6 +260,7 @@ public class JSONLayout extends JSONLayoutBase<ILoggingEvent>
         m_thread_name_label = label;
     }
 
+    @Override
     public String getThreadNameLabel()
     {
         return m_thread_name_label;
@@ -243,6 +271,7 @@ public class JSONLayout extends JSONLayoutBase<ILoggingEvent>
         m_logger_name_label = label;
     }
 
+    @Override
     public String getLoggerNameLabel()
     {
         return m_logger_name_label;
@@ -253,6 +282,7 @@ public class JSONLayout extends JSONLayoutBase<ILoggingEvent>
         m_show_raw_message = show;
     }
 
+    @Override
     public boolean getShowRawMessage()
     {
         return m_show_raw_message;
@@ -263,6 +293,7 @@ public class JSONLayout extends JSONLayoutBase<ILoggingEvent>
         m_show_arguments = show;
     }
 
+    @Override
     public boolean getShowArguments()
     {
         return m_show_arguments;
@@ -273,6 +304,7 @@ public class JSONLayout extends JSONLayoutBase<ILoggingEvent>
         m_show_unique_id = show;
     }
 
+    @Override
     public boolean getShowUniqueId()
     {
         return m_show_unique_id;
@@ -283,6 +315,7 @@ public class JSONLayout extends JSONLayoutBase<ILoggingEvent>
         m_show_exception = show;
     }
 
+    @Override
     public boolean getShowException()
     {
         return m_show_exception;
@@ -293,6 +326,7 @@ public class JSONLayout extends JSONLayoutBase<ILoggingEvent>
         m_show_formatted_message = show;
     }
 
+    @Override
     public boolean getShowFormattedMessage()
     {
         return m_show_formatted_message;
@@ -303,6 +337,7 @@ public class JSONLayout extends JSONLayoutBase<ILoggingEvent>
         m_show_mdc = show;
     }
 
+    @Override
     public boolean getShowMDC()
     {
         return m_show_mdc;
@@ -313,6 +348,7 @@ public class JSONLayout extends JSONLayoutBase<ILoggingEvent>
         m_show_timestamp = show;
     }
 
+    @Override
     public boolean getShowTimeStamp()
     {
         return m_show_timestamp;
@@ -323,6 +359,7 @@ public class JSONLayout extends JSONLayoutBase<ILoggingEvent>
         m_show_log_level = show;
     }
 
+    @Override
     public boolean getShowLogLevel()
     {
         return m_show_log_level;
@@ -333,6 +370,7 @@ public class JSONLayout extends JSONLayoutBase<ILoggingEvent>
         m_show_logger_name = show;
     }
 
+    @Override
     public boolean getShowLoggerName()
     {
         return m_show_logger_name;
@@ -343,6 +381,7 @@ public class JSONLayout extends JSONLayoutBase<ILoggingEvent>
         m_show_context_name = show;
     }
 
+    @Override
     public boolean getShowContextName()
     {
         return m_show_context_name;
@@ -353,6 +392,7 @@ public class JSONLayout extends JSONLayoutBase<ILoggingEvent>
         m_show_thread_name = show;
     }
 
+    @Override
     public boolean getShowThreadName()
     {
         return m_show_thread_name;
@@ -363,6 +403,7 @@ public class JSONLayout extends JSONLayoutBase<ILoggingEvent>
         m_dpattern = dpattern;
     }
 
+    @Override
     public String getDatePattern()
     {
         return requireNonNullOrElse(m_dpattern, ISO8601_PATTERNZ);
@@ -373,27 +414,30 @@ public class JSONLayout extends JSONLayoutBase<ILoggingEvent>
         m_timezone = TimeZone.getTimeZone(tz);
     }
 
+    @Override
     public TimeZone getTimeZone()
     {
         return requireNonNullOrElse(m_timezone, DEFAULT_TIMEZONE);
     }
 
-    public void setThrowableConverter(final JSONThrowableConverter converter)
+    public void setJSONThrowableConverter(final IJSONThrowableConverter converter)
     {
-        m_jsonthrowable_converter = requireNonNullOrElse(converter, () -> new JSONListThrowableConverter());
+        m_jsonthrowable_converter = converter;
     }
 
-    public JSONThrowableConverter getThrowableConverter()
+    @Override
+    public IJSONThrowableConverter getJSONThrowableConverter()
     {
         return m_jsonthrowable_converter;
     }
 
-    public void setEnhancer(final JSONLayoutEnhancer enhancer)
+    public void setJSONLayoutEnhancer(final JSONLayoutEnhancer enhancer)
     {
         m_enhancer = enhancer;
     }
 
-    public JSONLayoutEnhancer getEnhancer()
+    @Override
+    public JSONLayoutEnhancer getJSONLayoutEnhancer()
     {
         return m_enhancer;
     }

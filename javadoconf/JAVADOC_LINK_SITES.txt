@@ -1,5 +1,2 @@
 https://docs.oracle.com/javase/8/docs/api
-http://fasterxml.github.io/jackson-databind/javadoc/2.9
-http://fasterxml.github.io/jackson-core/javadoc/2.9
-http://fasterxml.github.io/jackson-annotations/javadoc/2.9
 https://logback.qos.ch/apidocs

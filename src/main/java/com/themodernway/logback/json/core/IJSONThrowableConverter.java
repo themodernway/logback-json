@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.themodernway.logback.json.core.layout;
+package com.themodernway.logback.json.core;
 
 import java.util.function.Supplier;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
 
-public interface JSONThrowableConverter
+public interface IJSONThrowableConverter
 {
     public void start();
 

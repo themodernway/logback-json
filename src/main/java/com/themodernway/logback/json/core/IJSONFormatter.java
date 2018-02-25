@@ -19,13 +19,13 @@ package com.themodernway.logback.json.core;
 import java.util.Map;
 
 /**
- * A {@code LogbackJSONFormatter} interface formats an object into a JSON string.
+ * A {@code IJSONFormatter} interface formats an object into a JSON string.
  *
  * @author Dean S. Jones
  * @since 0.0.1-SNAPSHOT
  */
 
-public interface LogbackJSONFormatter
+public interface IJSONFormatter
 {
     public boolean isPretty();
 

@@ -20,11 +20,14 @@ import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 
+import com.themodernway.logback.json.core.IJSONCommon;
+import com.themodernway.logback.json.core.IJSONThrowableConverter;
+
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.IThrowableProxy;
 import ch.qos.logback.classic.spi.StackTraceElementProxy;
 
-public class JSONListThrowableConverter implements JSONThrowableConverter, IJSONCommon
+public class JSONListThrowableConverter implements IJSONThrowableConverter, IJSONCommon
 {
     private int                 m_maxdeep;
 

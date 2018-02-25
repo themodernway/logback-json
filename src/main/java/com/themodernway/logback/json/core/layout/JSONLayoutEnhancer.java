@@ -22,7 +22,7 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 
 public interface JSONLayoutEnhancer
 {
-    public void before(Map<String, Object> target, ILoggingEvent event);
+    public void before(Map<String, Object> target, IJSONLayout<ILoggingEvent> layout, ILoggingEvent event);
 
-    public void finish(Map<String, Object> target, ILoggingEvent event);
+    public void finish(Map<String, Object> target, IJSONLayout<ILoggingEvent> layout, ILoggingEvent event);
 }

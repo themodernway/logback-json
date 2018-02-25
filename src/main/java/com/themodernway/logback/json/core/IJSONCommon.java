@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.themodernway.logback.json.core.layout;
+package com.themodernway.logback.json.core;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -29,7 +29,9 @@ import ch.qos.logback.core.CoreConstants;
 
 public interface IJSONCommon
 {
-    public static final String   CONTENTTYPE_JSON                = "application/json";
+    public static final String   JSON_INDENT_VALUE               = "  ";
+
+    public static final String   CONTENT_TYPE_JSON               = "application/json";
 
     public static final String   NEWLINE_STRING                  = CoreConstants.LINE_SEPARATOR;
 
@@ -61,6 +63,11 @@ public interface IJSONCommon
 
     public final static String   DEFAULT_FORMATTED_MESSAGE_LABEL = "message";
 
+    default long getTimeNow()
+    {
+        return System.currentTimeMillis();
+    }
+
     default public Supplier<?> nothing()
     {
         return () -> null;
@@ -71,13 +78,27 @@ public interface IJSONCommon
         return UUID.randomUUID().toString();
     }
 
-    default public List<?> toList(final Object[] args)
+    default public List<Object> asList(final boolean empty, final Object[] args)
     {
-        if (null == args)
+        return toList(empty, args);
+    }
+
+    @SuppressWarnings("unchecked")
+    default public <T> List<T> toList(final T... args)
+    {
+        return (null == args) ? Collections.emptyList() : Arrays.asList(args);
+    }
+
+    @SuppressWarnings("unchecked")
+    default public <T> List<T> toList(final boolean empty, final T... args)
+    {
+        final List<T> list = toList(args);
+
+        if ((false == empty) && (list.isEmpty()))
         {
-            return Collections.emptyList();
+            return null;
         }
-        return Arrays.asList(args);
+        return list;
     }
 
     default public String toString(final Object valu)
@@ -133,21 +154,26 @@ public interface IJSONCommon
         return (null != valu ? valu : otherwise.get());
     }
 
-    default public void append(final Map<String, Object> target, final String name, final boolean flag, final Supplier<?> supplier)
+    default public void append(final Map<String, Object> target, final Supplier<String> label, final boolean flag, final Supplier<?> supplier)
     {
         if (flag)
         {
-            final Object valu = supplier.get();
+            final String name = toTrimOrNull(label.get());
 
-            if (null != valu)
+            if (null != name)
             {
-                target.put(name, valu);
+                final Object valu = supplier.get();
+
+                if (null != valu)
+                {
+                    target.put(name, valu);
+                }
             }
         }
     }
 
-    default public void append(final Map<String, Object> target, final String name, final BooleanSupplier flag, final Supplier<?> supplier)
+    default public void append(final Map<String, Object> target, final Supplier<String> label, final BooleanSupplier flag, final Supplier<?> supplier)
     {
-        append(target, name, flag.getAsBoolean(), supplier);
+        append(target, label, flag.getAsBoolean(), supplier);
     }
 }
