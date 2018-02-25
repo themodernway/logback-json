@@ -21,10 +21,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.core.util.DefaultIndenter;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
-import com.fasterxml.jackson.core.util.VersionUtil;
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -45,8 +43,6 @@ public class CoreJSONFormatter extends ObjectMapper implements IJSONFormatter, I
     private static final long                serialVersionUID = 1L;
 
     private static final List<Module>        MAPPER_MODULES   = Arrays.asList(new Jdk8Module(), new JavaTimeModule());
-
-    private static final Version             MAPPER_VERSION   = VersionUtil.parseVersion("2.0.0-SNAPSHOT", "com.themodernway", "logback-json-core");
 
     public static final DefaultPrettyPrinter PRETTY           = PRETTY(JSON_INDENT_VALUE);
 
@@ -78,12 +74,6 @@ public class CoreJSONFormatter extends ObjectMapper implements IJSONFormatter, I
     public boolean isPretty()
     {
         return isEnabled(SerializationFeature.INDENT_OUTPUT);
-    }
-
-    @Override
-    public Version version()
-    {
-        return MAPPER_VERSION;
     }
 
     @Override
