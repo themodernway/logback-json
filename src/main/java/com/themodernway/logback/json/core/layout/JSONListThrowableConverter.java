@@ -87,8 +87,16 @@ public class JSONListThrowableConverter implements IJSONThrowableConverter, IJSO
         {
             recursive(list, tp.getCause(), deep + 1);
         }
-        list.add(tp.getClassName() + ": " + tp.getMessage());
+        final String mess = tp.getMessage();
 
+        if (null == mess)
+        {
+            list.add(tp.getClassName());
+        }
+        else
+        {
+            list.add(tp.getClassName() + "(" + mess + ")");
+        }
         stack(list, tp, deep + 1);
 
         final IThrowableProxy[] supp = tp.getSuppressed();
