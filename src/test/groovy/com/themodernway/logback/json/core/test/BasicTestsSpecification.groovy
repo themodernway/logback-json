@@ -17,6 +17,7 @@
 package com.themodernway.logback.json.core.test
 
 import com.themodernway.logback.json.core.test.util.AbstractSpecification
+import com.themodernway.logback.json.core.test.util.TestPOJO
 
 public class BasicTestsSpecification extends AbstractSpecification
 {
@@ -75,7 +76,11 @@ public class BasicTestsSpecification extends AbstractSpecification
         setup:
         echo "dummy(4)"
 
-        logger().info("dummy(4)", 6, 'Dean S. Jones', 3.14d, [name: 'Maël Hörz\u00A9\n', test: false])
+        def pojo = new TestPOJO()
+
+        pojo.setName('Maël Hörz\u00A9\n')
+
+        logger().warn("dummy(4)", 6, 'Dean S. Jones', 3.14d, [pojo: pojo, test: false])
 
         expect:
         true == true

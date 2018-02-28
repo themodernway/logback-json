@@ -25,7 +25,7 @@ import com.themodernway.logback.json.core.layout.JSONLayoutEnhancer;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
 
-public class CoreJSONLayoutEnhancer implements JSONLayoutEnhancer, IJSONCommon
+public class TestJSONLayoutEnhancer implements JSONLayoutEnhancer, IJSONCommon
 {
     public static final String COMPUTE_HOSTNAME       = localhost();
 
@@ -51,7 +51,7 @@ public class CoreJSONLayoutEnhancer implements JSONLayoutEnhancer, IJSONCommon
         }
     }
 
-    public CoreJSONLayoutEnhancer()
+    public TestJSONLayoutEnhancer()
     {
     }
 

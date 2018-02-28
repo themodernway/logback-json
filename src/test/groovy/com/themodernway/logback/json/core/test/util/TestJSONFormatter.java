@@ -32,31 +32,31 @@ import com.themodernway.logback.json.core.IJSONCommon;
 import com.themodernway.logback.json.core.IJSONFormatter;
 
 /**
- * A {@code CoreJSONFormatter} interface formats an object into a JSON string.
+ * A {@code TestJSONFormatter} interface formats an object into a JSON string.
  *
  * @author Dean S. Jones
- * @since 2.0.0-SNAPSHOT
+ * @since 2.0.1-SNAPSHOT
  */
 
-public class CoreJSONFormatter extends ObjectMapper implements IJSONFormatter, IJSONCommon
+public class TestJSONFormatter extends ObjectMapper implements IJSONFormatter, IJSONCommon
 {
-    private static final long                serialVersionUID = 1L;
+    private static final long                 serialVersionUID = 1L;
 
-    private static final List<Module>        MAPPER_MODULES   = Arrays.asList(new Jdk8Module(), new JavaTimeModule());
+    private static final List<Module>         MAPPER_MODULES   = Arrays.asList(new Jdk8Module(), new JavaTimeModule());
 
-    public static final DefaultPrettyPrinter PRETTY           = PRETTY(JSON_INDENT_VALUE);
+    private static final DefaultPrettyPrinter PRETTY_PRINTER   = buildPrettyPrinter();
 
-    public static final DefaultPrettyPrinter PRETTY(final String indent)
+    public static final DefaultPrettyPrinter buildPrettyPrinter()
     {
-        return new DefaultPrettyPrinter().withArrayIndenter(new DefaultIndenter().withIndent(indent)).withObjectIndenter(new DefaultIndenter().withIndent(indent));
+        return new DefaultPrettyPrinter().withArrayIndenter(new DefaultIndenter().withIndent(JSON_INDENT_VALUE)).withObjectIndenter(new DefaultIndenter().withIndent(JSON_INDENT_VALUE));
     }
 
-    public CoreJSONFormatter()
+    public TestJSONFormatter()
     {
-        registerModules(MAPPER_MODULES).enable(JsonGenerator.Feature.ESCAPE_NON_ASCII).setDefaultPrettyPrinter(PRETTY);
+        registerModules(MAPPER_MODULES).enable(JsonGenerator.Feature.ESCAPE_NON_ASCII).setDefaultPrettyPrinter(PRETTY_PRINTER);
     }
 
-    protected CoreJSONFormatter(final CoreJSONFormatter parent)
+    protected TestJSONFormatter(final TestJSONFormatter parent)
     {
         super(parent);
     }
@@ -77,11 +77,11 @@ public class CoreJSONFormatter extends ObjectMapper implements IJSONFormatter, I
     }
 
     @Override
-    public CoreJSONFormatter copy()
+    public TestJSONFormatter copy()
     {
-        _checkInvalidCopy(CoreJSONFormatter.class);
+        _checkInvalidCopy(TestJSONFormatter.class);
 
-        return new CoreJSONFormatter(this);
+        return new TestJSONFormatter(this);
     }
 
     @Override
