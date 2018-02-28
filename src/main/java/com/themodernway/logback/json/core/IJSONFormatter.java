@@ -36,8 +36,8 @@ public interface IJSONFormatter
      *
      * @param target the object to be converted.
      * @return a JSON String representation of the target.
-     * @throws Exception if there was an error converting the target to a String.
+     * @throws JSONFormattingException if there was an error converting the target to a String.
      */
 
-    public String toJSONString(Map<String, Object> target) throws Exception;
+    public String toJSONString(Map<String, Object> target) throws JSONFormattingException;
 }

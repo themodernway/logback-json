@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 import java.util.UUID;
-import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
 import ch.qos.logback.core.CoreConstants;
@@ -41,56 +40,51 @@ public interface IJSONCommon
 
     public static final TimeZone DEFAULT_TIMEZONE                = TimeZone.getTimeZone("UTC");
 
-    public final static String   DEFAULT_MDC_LABEL               = "mdc";
+    public static final String   DEFAULT_MDC_LABEL               = "mdc";
 
-    public final static String   DEFAULT_UNIQUE_ID_LABEL         = "uuid";
+    public static final String   DEFAULT_UNIQUE_ID_LABEL         = "uuid";
 
-    public final static String   DEFAULT_LOG_LEVEL_LABEL         = "level";
+    public static final String   DEFAULT_LOG_LEVEL_LABEL         = "level";
 
-    public final static String   DEFAULT_ARGUMENTS_LABEL         = "arguments";
+    public static final String   DEFAULT_ARGUMENTS_LABEL         = "arguments";
 
-    public final static String   DEFAULT_EXCEPTION_LABEL         = "exception";
+    public static final String   DEFAULT_EXCEPTION_LABEL         = "exception";
 
-    public final static String   DEFAULT_TIMESTAMP_LABEL         = "timestamp";
+    public static final String   DEFAULT_TIMESTAMP_LABEL         = "timestamp";
 
-    public final static String   DEFAULT_THREAD_NAME_LABEL       = "thread";
+    public static final String   DEFAULT_THREAD_NAME_LABEL       = "thread";
 
-    public final static String   DEFAULT_LOGGER_NAME_LABEL       = "logger";
+    public static final String   DEFAULT_LOGGER_NAME_LABEL       = "logger";
 
-    public final static String   DEFAULT_RAW_MESSAGE_LABEL       = "raw_message";
+    public static final String   DEFAULT_RAW_MESSAGE_LABEL       = "raw_message";
 
-    public final static String   DEFAULT_CONTEXT_NAME_LABEL      = "context";
+    public static final String   DEFAULT_CONTEXT_NAME_LABEL      = "context";
 
-    public final static String   DEFAULT_FORMATTED_MESSAGE_LABEL = "message";
+    public static final String   DEFAULT_FORMATTED_MESSAGE_LABEL = "message";
 
     default long getTimeNow()
     {
         return System.currentTimeMillis();
     }
 
-    default public Supplier<?> nothing()
-    {
-        return () -> null;
-    }
-
-    default public String uuid()
+    default String uuid()
     {
         return UUID.randomUUID().toString();
     }
 
-    default public List<Object> asList(final boolean empty, final Object[] args)
+    default List<Object> asList(final boolean empty, final Object[] args)
     {
         return toList(empty, args);
     }
 
     @SuppressWarnings("unchecked")
-    default public <T> List<T> toList(final T... args)
+    default <T> List<T> toList(final T... args)
     {
         return (null == args) ? Collections.emptyList() : Arrays.asList(args);
     }
 
     @SuppressWarnings("unchecked")
-    default public <T> List<T> toList(final boolean empty, final T... args)
+    default <T> List<T> toList(final boolean empty, final T... args)
     {
         final List<T> list = toList(args);
 
@@ -101,27 +95,27 @@ public interface IJSONCommon
         return list;
     }
 
-    default public String toString(final Object valu)
+    default String toString(final Object valu)
     {
         return (null != valu ? valu.toString() : "null");
     }
 
-    default public String toStringOrNull(final Object valu)
+    default String toStringOrNull(final Object valu)
     {
         return (null != valu ? valu.toString() : null);
     }
 
-    default public String toStringOrElse(final Object valu, final String otherwise)
+    default String toStringOrElse(final Object valu, final String otherwise)
     {
         return (null != valu ? valu.toString() : otherwise);
     }
 
-    default public String toStringOrElse(final Object valu, final Supplier<String> otherwise)
+    default String toStringOrElse(final Object valu, final Supplier<String> otherwise)
     {
         return (null != valu ? valu.toString() : otherwise.get());
     }
 
-    default public String toTrimOrNull(String string)
+    default String toTrimOrNull(String string)
     {
         if ((null == string) || (string.isEmpty()))
         {
@@ -134,27 +128,27 @@ public interface IJSONCommon
         return string;
     }
 
-    default public String toTrimOrElse(final String string, final String otherwise)
+    default String toTrimOrElse(final String string, final String otherwise)
     {
         return requireNonNullOrElse(toTrimOrNull(string), otherwise);
     }
 
-    default public String toTrimOrElse(final String string, final Supplier<String> otherwise)
+    default String toTrimOrElse(final String string, final Supplier<String> otherwise)
     {
         return requireNonNullOrElse(toTrimOrNull(string), otherwise);
     }
 
-    default public <T> T requireNonNullOrElse(final T valu, final T otherwise)
+    default <T> T requireNonNullOrElse(final T valu, final T otherwise)
     {
         return (null != valu ? valu : otherwise);
     }
 
-    default public <T> T requireNonNullOrElse(final T valu, final Supplier<T> otherwise)
+    default <T> T requireNonNullOrElse(final T valu, final Supplier<T> otherwise)
     {
         return (null != valu ? valu : otherwise.get());
     }
 
-    default public void append(final Map<String, Object> target, final Supplier<String> label, final boolean flag, final Supplier<?> supplier)
+    default void append(final Map<String, Object> target, final Supplier<String> label, final boolean flag, final Supplier<?> supplier)
     {
         if (flag)
         {
@@ -170,10 +164,5 @@ public interface IJSONCommon
                 }
             }
         }
-    }
-
-    default public void append(final Map<String, Object> target, final Supplier<String> label, final BooleanSupplier flag, final Supplier<?> supplier)
-    {
-        append(target, label, flag.getAsBoolean(), supplier);
     }
 }

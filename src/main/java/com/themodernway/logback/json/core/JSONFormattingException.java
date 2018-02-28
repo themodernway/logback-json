@@ -16,17 +16,26 @@
 
 package com.themodernway.logback.json.core;
 
-import java.util.function.Supplier;
-
-import ch.qos.logback.classic.spi.ILoggingEvent;
-
-public interface IJSONThrowableConverter<T>
+public class JSONFormattingException extends Exception
 {
-    public void start();
+    private static final long serialVersionUID = 2113014474531442350L;
 
-    public void stop();
+    public JSONFormattingException()
+    {
+    }
 
-    public boolean isStarted();
+    public JSONFormattingException(final String message)
+    {
+        super(message);
+    }
 
-    public Supplier<T> supplier(ILoggingEvent event);
+    public JSONFormattingException(final Throwable cause)
+    {
+        super(cause);
+    }
+
+    public JSONFormattingException(final String message, final Throwable cause)
+    {
+        super(message, cause);
+    }
 }

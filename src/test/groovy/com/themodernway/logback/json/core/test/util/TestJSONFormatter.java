@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.util.DefaultIndenter;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.Module;
@@ -30,6 +31,7 @@ import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.themodernway.logback.json.core.IJSONCommon;
 import com.themodernway.logback.json.core.IJSONFormatter;
+import com.themodernway.logback.json.core.JSONFormattingException;
 
 /**
  * A {@code TestJSONFormatter} interface formats an object into a JSON string.
@@ -64,10 +66,7 @@ public class TestJSONFormatter extends ObjectMapper implements IJSONFormatter, I
     @Override
     public void setPretty(final boolean pretty)
     {
-        if (pretty != isPretty())
-        {
-            configure(SerializationFeature.INDENT_OUTPUT, pretty);
-        }
+        configure(SerializationFeature.INDENT_OUTPUT, pretty);
     }
 
     @Override
@@ -85,8 +84,15 @@ public class TestJSONFormatter extends ObjectMapper implements IJSONFormatter, I
     }
 
     @Override
-    public String toJSONString(final Map<String, Object> target) throws Exception
+    public String toJSONString(final Map<String, Object> target) throws JSONFormattingException
     {
-        return writeValueAsString(target);
+        try
+        {
+            return writeValueAsString(target);
+        }
+        catch (final JsonProcessingException e)
+        {
+            throw new JSONFormattingException(e);
+        }
     }
 }

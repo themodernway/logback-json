@@ -22,7 +22,7 @@ import java.util.TimeZone;
 
 public class JSONDateFormatCached extends SimpleDateFormat
 {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -2292887716545717360L;
 
     private transient long    m_last;
 

@@ -17,6 +17,7 @@
 package com.themodernway.logback.json.core.layout;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 
@@ -27,7 +28,7 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.IThrowableProxy;
 import ch.qos.logback.classic.spi.StackTraceElementProxy;
 
-public class JSONListThrowableConverter implements IJSONThrowableConverter, IJSONCommon
+public class JSONListThrowableConverter implements IJSONThrowableConverter<List<Object>>, IJSONCommon
 {
     private int                 m_maxdeep;
 
@@ -54,30 +55,30 @@ public class JSONListThrowableConverter implements IJSONThrowableConverter, IJSO
     }
 
     @Override
-    public Supplier<?> supplier(final ILoggingEvent event)
+    public Supplier<List<Object>> supplier(final ILoggingEvent event)
     {
         if (false == isStarted())
         {
-            return nothing();
+            return () -> null;
         }
         final IThrowableProxy tp = event.getThrowableProxy();
 
         if (null == tp)
         {
-            return nothing();
+            return () -> null;
         }
-        final ArrayList<Object> list = new ArrayList<Object>();
+        final List<Object> list = new ArrayList<Object>();
 
         recursive(list, tp, 0);
 
         if (list.isEmpty())
         {
-            return nothing();
+            return () -> null;
         }
         return () -> list;
     }
 
-    public void recursive(final ArrayList<Object> list, final IThrowableProxy tp, final int deep)
+    public void recursive(final List<Object> list, final IThrowableProxy tp, final int deep)
     {
         if ((null == tp) || (deep >= getMaxDepth()))
         {
@@ -110,7 +111,7 @@ public class JSONListThrowableConverter implements IJSONThrowableConverter, IJSO
         }
     }
 
-    public void stack(final ArrayList<Object> list, final IThrowableProxy tp, final int deep)
+    public void stack(final List<Object> list, final IThrowableProxy tp, final int deep)
     {
         final StackTraceElementProxy[] elements = tp.getStackTraceElementProxyArray();
 

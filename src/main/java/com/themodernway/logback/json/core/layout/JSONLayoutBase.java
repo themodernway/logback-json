@@ -19,36 +19,17 @@ package com.themodernway.logback.json.core.layout;
 import java.util.Map;
 
 import com.themodernway.logback.json.core.IJSONFormatter;
+import com.themodernway.logback.json.core.JSONFormattingException;
 
 import ch.qos.logback.core.LayoutBase;
 
 public abstract class JSONLayoutBase<E> extends LayoutBase<E> implements IJSONLayout<E>
 {
-    private boolean                    m_is_pretty;
+    private boolean        m_is_pretty;
 
-    private String                     m_line_feed;
+    private String         m_line_feed;
 
-    private IJSONFormatter             m_formatter;
-
-    private static final IJSONFormatter FORMAT_NONE = new IJSONFormatter()
-    {
-        @Override
-        public boolean isPretty()
-        {
-            return false;
-        }
-
-        @Override
-        public void setPretty(final boolean pretty)
-        {
-        }
-
-        @Override
-        public String toJSONString(final Map<String, Object> target) throws Exception
-        {
-            return EMPTY_STRING;
-        }
-    };
+    private IJSONFormatter m_formatter;
 
     protected JSONLayoutBase()
     {
@@ -58,8 +39,10 @@ public abstract class JSONLayoutBase<E> extends LayoutBase<E> implements IJSONLa
     @Override
     public void start()
     {
-        requireNonNullOrElse(getJSONFormatter(), FORMAT_NONE).setPretty(isPretty());
-
+        if (null != getJSONFormatter())
+        {
+            getJSONFormatter().setPretty(isPretty());
+        }
         super.start();
     }
 
@@ -110,11 +93,15 @@ public abstract class JSONLayoutBase<E> extends LayoutBase<E> implements IJSONLa
         {
             return EMPTY_STRING;
         }
+        if (null == getJSONFormatter())
+        {
+            return EMPTY_STRING;
+        }
         try
         {
-            return requireNonNullOrElse(getJSONFormatter(), FORMAT_NONE).toJSONString(target) + requireNonNullOrElse(getLineFeed(), NEWLINE_STRING);
+            return getJSONFormatter().toJSONString(target) + requireNonNullOrElse(getLineFeed(), NEWLINE_STRING);
         }
-        catch (final Exception e)
+        catch (final JSONFormattingException e)
         {
             addError("error converting to JSON.", e);
 
