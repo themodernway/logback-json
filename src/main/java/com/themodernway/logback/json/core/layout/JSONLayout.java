@@ -20,18 +20,25 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TimeZone;
 
+import com.themodernway.logback.json.core.IJSONFormatter;
 import com.themodernway.logback.json.core.IJSONThrowableConverter;
 import com.themodernway.logback.json.core.JSONDateFormatCached;
+import com.themodernway.logback.json.core.JSONFormattingException;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.LayoutBase;
 
-public class JSONLayout extends JSONLayoutBase<ILoggingEvent>
+public class JSONLayout extends LayoutBase<ILoggingEvent> implements IJSONLayout<ILoggingEvent>
 {
     private String                                  m_dpattern                = ISO8601_PATTERNZ;
 
     private TimeZone                                m_timezone                = DEFAULT_TIMEZONE;
 
     private JSONLayoutEnhancer                      m_enhancer;
+
+    private IJSONFormatter                          m_formatter;
+
+    private boolean                                 m_is_pretty;
 
     private boolean                                 m_show_mdc                = true;
 
@@ -54,6 +61,8 @@ public class JSONLayout extends JSONLayoutBase<ILoggingEvent>
     private boolean                                 m_show_context_name       = true;
 
     private boolean                                 m_show_formatted_message  = true;
+
+    private String                                  m_line_feed               = NEWLINE_STRING;
 
     private String                                  m_mdc_label               = DEFAULT_MDC_LABEL;
 
@@ -88,6 +97,12 @@ public class JSONLayout extends JSONLayoutBase<ILoggingEvent>
     @Override
     public void start()
     {
+        final IJSONFormatter formatter = getJSONFormatter();
+
+        if (null != formatter)
+        {
+            formatter.setPretty(isPretty());
+        }
         final IJSONThrowableConverter converter = getJSONThrowableConverter();
 
         if (null != converter)
@@ -107,6 +122,41 @@ public class JSONLayout extends JSONLayoutBase<ILoggingEvent>
         if (null != converter)
         {
             converter.stop();
+        }
+    }
+
+    @Override
+    public String getContentType()
+    {
+        return CONTENT_TYPE_JSON;
+    }
+
+    @Override
+    public String doLayout(final ILoggingEvent event)
+    {
+        if (false == isStarted())
+        {
+            return EMPTY_STRING;
+        }
+        final Map<String, Object> target = convertEvent(event);
+
+        if ((null == target) || (target.isEmpty()))
+        {
+            return EMPTY_STRING;
+        }
+        if (null == getJSONFormatter())
+        {
+            return EMPTY_STRING;
+        }
+        try
+        {
+            return getJSONFormatter().toJSONString(target) + requireNonNullOrElse(getLineFeed(), NEWLINE_STRING);
+        }
+        catch (final JSONFormattingException e)
+        {
+            addError("error converting to JSON.", e);
+
+            return EMPTY_STRING;
         }
     }
 
@@ -148,6 +198,39 @@ public class JSONLayout extends JSONLayoutBase<ILoggingEvent>
             enhance.finish(target, this, event);
         }
         return target;
+    }
+
+    public void setLineFeed(final String line)
+    {
+        m_line_feed = line;
+    }
+
+    @Override
+    public String getLineFeed()
+    {
+        return m_line_feed;
+    }
+
+    @Override
+    public IJSONFormatter getJSONFormatter()
+    {
+        return m_formatter;
+    }
+
+    public void setJSONFormatter(final IJSONFormatter formatter)
+    {
+        m_formatter = formatter;
+    }
+
+    public void setPretty(final boolean pretty)
+    {
+        m_is_pretty = pretty;
+    }
+
+    @Override
+    public boolean isPretty()
+    {
+        return m_is_pretty;
     }
 
     @Override

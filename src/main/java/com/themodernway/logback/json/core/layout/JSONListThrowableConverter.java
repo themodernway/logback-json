@@ -28,7 +28,7 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.IThrowableProxy;
 import ch.qos.logback.classic.spi.StackTraceElementProxy;
 
-public class JSONListThrowableConverter implements IJSONThrowableConverter<List<Object>>, IJSONCommon
+public class JSONListThrowableConverter implements IJSONThrowableConverter, IJSONCommon
 {
     private int                 m_maxdeep;
 
@@ -55,34 +55,22 @@ public class JSONListThrowableConverter implements IJSONThrowableConverter<List<
     }
 
     @Override
-    public Supplier<List<Object>> supplier(final ILoggingEvent event)
+    public Supplier<Object> supplier(final ILoggingEvent event)
     {
-        if (false == isStarted())
-        {
-            return () -> null;
-        }
         final IThrowableProxy tp = event.getThrowableProxy();
 
         if (null == tp)
         {
             return () -> null;
         }
-        final List<Object> list = new ArrayList<Object>();
-
-        recursive(list, tp, 0);
-
-        if (list.isEmpty())
-        {
-            return () -> null;
-        }
-        return () -> list;
+        return () -> toListOrNull(recursive(new ArrayList<>(), tp, 0));
     }
 
-    public void recursive(final List<Object> list, final IThrowableProxy tp, final int deep)
+    protected List<Object> recursive(final List<Object> list, final IThrowableProxy tp, final int deep)
     {
         if ((null == tp) || (deep >= getMaxDepth()))
         {
-            return;
+            return list;
         }
         if (null != tp.getCause())
         {
@@ -109,9 +97,10 @@ public class JSONListThrowableConverter implements IJSONThrowableConverter<List<
                 recursive(list, sp, deep + 1);
             }
         }
+        return list;
     }
 
-    public void stack(final List<Object> list, final IThrowableProxy tp, final int deep)
+    protected void stack(final List<Object> list, final IThrowableProxy tp, final int deep)
     {
         final StackTraceElementProxy[] elements = tp.getStackTraceElementProxyArray();
 

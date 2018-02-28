@@ -20,7 +20,7 @@ import java.util.function.Supplier;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
 
-public interface IJSONThrowableConverter<T>
+public interface IJSONThrowableConverter
 {
     public void start();
 
@@ -28,5 +28,5 @@ public interface IJSONThrowableConverter<T>
 
     public boolean isStarted();
 
-    public Supplier<T> supplier(ILoggingEvent event);
+    public Supplier<Object> supplier(ILoggingEvent event);
 }

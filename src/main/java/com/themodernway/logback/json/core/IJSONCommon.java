@@ -95,6 +95,11 @@ public interface IJSONCommon
         return list;
     }
 
+    default <T> List<T> toListOrNull(final List<T> list)
+    {
+        return ((null == list) || (list.isEmpty())) ? null : list;
+    }
+
     default String toString(final Object valu)
     {
         return (null != valu ? valu.toString() : "null");
@@ -148,7 +153,7 @@ public interface IJSONCommon
         return (null != valu ? valu : otherwise.get());
     }
 
-    default void append(final Map<String, Object> target, final Supplier<String> label, final boolean flag, final Supplier<?> supplier)
+    default void append(final Map<String, Object> target, final Supplier<String> label, final boolean flag, final Supplier<Object> supplier)
     {
         if (flag)
         {

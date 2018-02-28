@@ -34,7 +34,7 @@ public class JSONStringThrowableConverter implements IJSONThrowableConverter, IJ
     }
 
     @Override
-    public Supplier<?> supplier(final ILoggingEvent event)
+    public Supplier<Object> supplier(final ILoggingEvent event)
     {
         return () -> toTrimOrNull(m_proxy_handler_converter.convert(event));
     }
