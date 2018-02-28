@@ -16,6 +16,7 @@
 
 package com.themodernway.logback.json.core.test
 
+import com.themodernway.logback.json.core.JSONFormattingException
 import com.themodernway.logback.json.core.test.util.AbstractSpecification
 import com.themodernway.logback.json.core.test.util.TestPOJO
 
@@ -66,6 +67,50 @@ public class BasicTestsSpecification extends AbstractSpecification
         echo "oops(2)"
 
         logger().error("oops(2)", new NullPointerException())
+
+        expect:
+        true == true
+    }
+
+    def "oops(3)"()
+    {
+        setup:
+        echo "oops(3)"
+
+        logger().error("oops(3)", new JSONFormattingException())
+
+        expect:
+        true == true
+    }
+
+    def "oops(4)"()
+    {
+        setup:
+        echo "oops(4)"
+
+        logger().error("oops(4)", new JSONFormattingException("jfe"))
+
+        expect:
+        true == true
+    }
+
+    def "oops(5)"()
+    {
+        setup:
+        echo "oops(5)"
+
+        logger().error("oops(5)", new JSONFormattingException(new NullPointerException()))
+
+        expect:
+        true == true
+    }
+
+    def "oops(6)"()
+    {
+        setup:
+        echo "oops(6)"
+
+        logger().error("oops(6)", new JSONFormattingException("jfe", new NullPointerException("npe")))
 
         expect:
         true == true
