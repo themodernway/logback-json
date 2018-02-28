@@ -126,7 +126,9 @@ public interface IJSONCommon
         {
             return null;
         }
-        if ((string = string.trim()).isEmpty())
+        string = string.trim();
+
+        if (string.isEmpty())
         {
             return null;
         }

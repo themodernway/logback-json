@@ -38,7 +38,7 @@ public class JSONLayout extends LayoutBase<ILoggingEvent> implements IJSONLayout
 
     private IJSONFormatter                          m_formatter;
 
-    private boolean                                 m_is_pretty;
+    private boolean                                 m_is_pretty               = true;
 
     private boolean                                 m_show_mdc                = true;
 
@@ -92,6 +92,11 @@ public class JSONLayout extends LayoutBase<ILoggingEvent> implements IJSONLayout
 
     public JSONLayout()
     {
+        setPretty(false);
+
+        setShowThreadName(false);
+
+        setShowContextName(false);
     }
 
     @Override
@@ -163,9 +168,9 @@ public class JSONLayout extends LayoutBase<ILoggingEvent> implements IJSONLayout
     @Override
     public Map<String, Object> convertEvent(final ILoggingEvent event)
     {
-        final JSONLayoutEnhancer enhance = getJSONLayoutEnhancer();
+        final Map<String, Object> target = new LinkedHashMap<>();
 
-        final Map<String, Object> target = new LinkedHashMap<String, Object>();
+        final JSONLayoutEnhancer enhance = getJSONLayoutEnhancer();
 
         if (null != enhance)
         {
@@ -173,23 +178,23 @@ public class JSONLayout extends LayoutBase<ILoggingEvent> implements IJSONLayout
         }
         append(target, () -> toTrimOrElse(getTimeStampLabel(), DEFAULT_TIMESTAMP_LABEL), getShowTimeStamp(), () -> getJSONDateFormatCached().format(event.getTimeStamp()));
 
-        append(target, () -> toTrimOrElse(getUniqueIdLabel(), DEFAULT_UNIQUE_ID_LABEL), getShowUniqueId(), () -> uuid());
+        append(target, () -> toTrimOrElse(getUniqueIdLabel(), DEFAULT_UNIQUE_ID_LABEL), getShowUniqueId(), this::uuid);
 
         append(target, () -> toTrimOrElse(getLogLevelLabel(), DEFAULT_LOG_LEVEL_LABEL), getShowLogLevel(), () -> toString(event.getLevel()));
 
-        append(target, () -> toTrimOrElse(getThreadNameLabel(), DEFAULT_THREAD_NAME_LABEL), getShowThreadName(), () -> event.getThreadName());
+        append(target, () -> toTrimOrElse(getThreadNameLabel(), DEFAULT_THREAD_NAME_LABEL), getShowThreadName(), event::getThreadName);
 
-        append(target, () -> toTrimOrElse(getLoggerNameLabel(), DEFAULT_LOGGER_NAME_LABEL), getShowLoggerName(), () -> event.getLoggerName());
+        append(target, () -> toTrimOrElse(getLoggerNameLabel(), DEFAULT_LOGGER_NAME_LABEL), getShowLoggerName(), event::getLoggerName);
 
-        append(target, () -> toTrimOrElse(getFormattedMessageLabel(), DEFAULT_FORMATTED_MESSAGE_LABEL), getShowFormattedMessage(), () -> event.getFormattedMessage());
+        append(target, () -> toTrimOrElse(getFormattedMessageLabel(), DEFAULT_FORMATTED_MESSAGE_LABEL), getShowFormattedMessage(), event::getFormattedMessage);
 
-        append(target, () -> toTrimOrElse(getRawMessageLabel(), DEFAULT_RAW_MESSAGE_LABEL), getShowRawMessage(), () -> event.getMessage());
+        append(target, () -> toTrimOrElse(getRawMessageLabel(), DEFAULT_RAW_MESSAGE_LABEL), getShowRawMessage(), event::getMessage);
 
         append(target, () -> toTrimOrElse(getArgumentsLabel(), DEFAULT_ARGUMENTS_LABEL), getShowArguments(), () -> asList(true, event.getArgumentArray()));
 
         append(target, () -> toTrimOrElse(getContextNameLabel(), DEFAULT_CONTEXT_NAME_LABEL), getShowContextName(), () -> event.getLoggerContextVO().getName());
 
-        append(target, () -> toTrimOrElse(getMDCLabel(), DEFAULT_MDC_LABEL), getShowMDC(), () -> event.getMDCPropertyMap());
+        append(target, () -> toTrimOrElse(getMDCLabel(), DEFAULT_MDC_LABEL), getShowMDC(), event::getMDCPropertyMap);
 
         append(target, () -> toTrimOrElse(getExceptionLabel(), DEFAULT_EXCEPTION_LABEL), getShowException() && (null != event.getThrowableProxy()), requireNonNullOrElse(getJSONThrowableConverter(), () -> new JSONListThrowableConverter()).supplier(event));
 

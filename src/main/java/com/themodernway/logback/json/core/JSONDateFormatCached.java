@@ -39,8 +39,30 @@ public class JSONDateFormatCached extends SimpleDateFormat
     {
         if (time != m_last)
         {
-            m_save = super.format(new Date(m_last = time));
+            m_last = time;
+
+            m_save = super.format(new Date(m_last));
         }
         return m_save;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return super.hashCode();
+    }
+
+    @Override
+    public boolean equals(final Object object)
+    {
+        if (this == object)
+        {
+            return true;
+        }
+        if ((null == object) || (getClass() != object.getClass()))
+        {
+            return false;
+        }
+        return super.equals(object);
     }
 }

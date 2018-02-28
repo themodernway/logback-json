@@ -86,7 +86,7 @@ public class JSONListThrowableConverter implements IJSONThrowableConverter, IJSO
         {
             list.add(tp.getClassName() + "(" + mess + ")");
         }
-        stack(list, tp, deep + 1);
+        stack(list, tp);
 
         final IThrowableProxy[] supp = tp.getSuppressed();
 
@@ -100,7 +100,7 @@ public class JSONListThrowableConverter implements IJSONThrowableConverter, IJSO
         return list;
     }
 
-    protected void stack(final List<Object> list, final IThrowableProxy tp, final int deep)
+    protected void stack(final List<Object> list, final IThrowableProxy tp)
     {
         final StackTraceElementProxy[] elements = tp.getStackTraceElementProxyArray();
 
