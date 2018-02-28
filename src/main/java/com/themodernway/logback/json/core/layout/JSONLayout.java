@@ -196,7 +196,7 @@ public class JSONLayout extends LayoutBase<ILoggingEvent> implements IJSONLayout
 
         append(target, () -> toTrimOrElse(getMDCLabel(), DEFAULT_MDC_LABEL), getShowMDC(), event::getMDCPropertyMap);
 
-        append(target, () -> toTrimOrElse(getExceptionLabel(), DEFAULT_EXCEPTION_LABEL), getShowException() && (null != event.getThrowableProxy()), requireNonNullOrElse(getJSONThrowableConverter(), () -> new JSONListThrowableConverter()).supplier(event));
+        append(target, () -> toTrimOrElse(getExceptionLabel(), DEFAULT_EXCEPTION_LABEL), getShowException() && (null != event.getThrowableProxy()), getJSONThrowableConverter().supplier(event));
 
         if (null != enhance)
         {

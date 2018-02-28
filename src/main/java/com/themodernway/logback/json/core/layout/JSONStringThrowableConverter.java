@@ -27,10 +27,11 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 
 public class JSONStringThrowableConverter implements IJSONThrowableConverter, IJSONCommon
 {
-    private final ThrowableHandlingConverter m_proxy_handler_converter = new RootCauseFirstThrowableProxyConverter();
+    private final ThrowableHandlingConverter m_proxy_handler_converter;
 
     public JSONStringThrowableConverter()
     {
+        m_proxy_handler_converter = new RootCauseFirstThrowableProxyConverter();
     }
 
     @Override
