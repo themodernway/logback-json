@@ -20,6 +20,13 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
+/**
+ * A {@code JSONDateFormatCached} is a subclass of {@link SimpleDateFormat} that is only used with long time stamps .
+ *
+ * @author Dean S. Jones
+ * @since 2.0.6-SNAPSHOT
+ */
+
 public class JSONDateFormatCached extends SimpleDateFormat
 {
     private static final long serialVersionUID = -2292887716545717360L;

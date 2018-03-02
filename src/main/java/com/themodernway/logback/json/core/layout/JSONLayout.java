@@ -28,6 +28,13 @@ import com.themodernway.logback.json.core.JSONFormattingException;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.LayoutBase;
 
+/**
+ * A {@code JSONLayout} is a subclass of {@link LayoutBase}.
+ *
+ * @author Dean S. Jones
+ * @since 2.0.6-SNAPSHOT
+ */
+
 public class JSONLayout extends LayoutBase<ILoggingEvent> implements IJSONLayout<ILoggingEvent>
 {
     private String                  m_dpattern                = ISO8601_PATTERNZ;
@@ -229,6 +236,7 @@ public class JSONLayout extends LayoutBase<ILoggingEvent> implements IJSONLayout
         m_formatter = formatter;
     }
 
+    @Override
     public void setPretty(final boolean pretty)
     {
         m_is_pretty = pretty;

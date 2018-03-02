@@ -21,10 +21,13 @@ import java.util.TimeZone;
 
 import com.themodernway.logback.json.core.IJSONCommon;
 import com.themodernway.logback.json.core.IJSONFormatter;
+import com.themodernway.logback.json.core.IJSONPrettyPrinter;
 import com.themodernway.logback.json.core.IJSONThrowableConverter;
 import com.themodernway.logback.json.core.JSONDateFormatCached;
 
-public interface IJSONLayout<E> extends IJSONCommon
+import ch.qos.logback.core.spi.LifeCycle;
+
+public interface IJSONLayout<E> extends IJSONPrettyPrinter, IJSONCommon, LifeCycle
 {
     public String getRawMessageLabel();
 
@@ -49,8 +52,6 @@ public interface IJSONLayout<E> extends IJSONCommon
     public String getLoggerNameLabel();
 
     public String getLineFeed();
-
-    public boolean isPretty();
 
     public boolean getShowRawMessage();
 

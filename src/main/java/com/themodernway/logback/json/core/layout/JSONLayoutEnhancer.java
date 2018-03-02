@@ -20,6 +20,13 @@ import java.util.Map;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
 
+/**
+ * A {@code JSONLayoutEnhancer} interface.
+ *
+ * @author Dean S. Jones
+ * @since 2.0.6-SNAPSHOT
+ */
+
 public interface JSONLayoutEnhancer
 {
     public void before(Map<String, Object> target, IJSONLayout<ILoggingEvent> layout, ILoggingEvent event);

@@ -16,6 +16,13 @@
 
 package com.themodernway.logback.json.core;
 
+/**
+ * A {@code JSONFormattingException} is a subclass of {@link Exception}.
+ *
+ * @author Dean S. Jones
+ * @since 2.0.6-SNAPSHOT
+ */
+
 public class JSONFormattingException extends Exception
 {
     private static final long serialVersionUID = 2113014474531442350L;

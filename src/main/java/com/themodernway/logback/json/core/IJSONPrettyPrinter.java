@@ -16,26 +16,28 @@
 
 package com.themodernway.logback.json.core;
 
-import java.util.function.Supplier;
-
-import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.core.spi.LifeCycle;
-
 /**
- * A {@code IJSONThrowableConverter} interface, which is a definition of classes that convert an {@link ILoggingEvent} to a {@link Supplier}.
+ * A {@code IJSONPrettyPrinter} interface, which defines if pretty printing is on or off.
  *
  * @author Dean S. Jones
  * @since 2.0.6-SNAPSHOT
  */
 
-public interface IJSONThrowableConverter extends LifeCycle
+public interface IJSONPrettyPrinter
 {
     /**
-     * Converts the specified event into a Supplier.
+     * Returns <tt>true</tt> if this IJSONPrettyPrinter is in pretty printing mode.
      *
-     * @param event the {@link ILoggingEvent} to be converted to a {@link Supplier}.
-     * @return a {@link Supplier} from the {@link ILoggingEvent}.
+     * @return <tt>true</tt> if this IJSONPrettyPrinter is in pretty printing mode.
      */
 
-    public Supplier<Object> supplier(final ILoggingEvent event);
+    public boolean isPretty();
+
+    /**
+     * Sets this IJSONPrettyPrinter pretty printing mode.
+     *
+     * @param pretty <tt>true</tt> or <tt>false</tt> for pretty printing mode.
+     */
+
+    public void setPretty(final boolean pretty);
 }

@@ -25,24 +25,8 @@ import java.util.Map;
  * @since 2.0.6-SNAPSHOT
  */
 
-public interface IJSONFormatter
+public interface IJSONFormatter extends IJSONPrettyPrinter
 {
-    /**
-     * Returns <tt>true</tt> if this IJSONFormatter is in pretty printing mode.
-     *
-     * @return <tt>true</tt> if this IJSONFormatter is in pretty printing mode.
-     */
-
-    public boolean isPretty();
-
-    /**
-     * Sets this IJSONFormatter pretty printing mode.
-     *
-     * @param pretty <tt>true</tt> or <tt>false</tt> for pretty printing mode.
-     */
-
-    public void setPretty(final boolean pretty);
-
     /**
      * Converts the specified target into a JSON string.
      *
