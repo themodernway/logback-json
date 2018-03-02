@@ -26,6 +26,13 @@ import java.util.function.Supplier;
 
 import ch.qos.logback.core.CoreConstants;
 
+/**
+ * A {@code IJSONCommon} interface that has common methods and constants.
+ *
+ * @author Dean S. Jones
+ * @since 2.0.6-SNAPSHOT
+ */
+
 public interface IJSONCommon
 {
     public static final String   JSON_INDENT_VALUE               = "  ";

@@ -20,6 +20,13 @@ import java.util.function.Supplier;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
 
+/**
+ * A {@code IJSONThrowableConverter} interface, which is a definition of classes that convert an {@link ILoggingEvent} to a {@link Supplier}.
+ *
+ * @author Dean S. Jones
+ * @since 2.0.6-SNAPSHOT
+ */
+
 public interface IJSONThrowableConverter
 {
     public void start();
