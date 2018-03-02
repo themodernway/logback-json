@@ -16,14 +16,14 @@
 
 package com.themodernway.logback.json.core.layout;
 
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
-import java.util.TimeZone;
 
 import com.themodernway.logback.json.core.IJSONCommon;
 import com.themodernway.logback.json.core.IJSONFormatter;
 import com.themodernway.logback.json.core.IJSONPrettyPrinter;
 import com.themodernway.logback.json.core.IJSONThrowableConverter;
-import com.themodernway.logback.json.core.JSONDateFormatCached;
 
 import ch.qos.logback.core.spi.LifeCycle;
 
@@ -77,7 +77,7 @@ public interface IJSONLayout<E> extends IJSONPrettyPrinter, IJSONCommon, LifeCyc
 
     public String getDatePattern();
 
-    public TimeZone getTimeZone();
+    public ZoneId getTimeZone();
 
     public IJSONFormatter getJSONFormatter();
 
@@ -85,7 +85,7 @@ public interface IJSONLayout<E> extends IJSONPrettyPrinter, IJSONCommon, LifeCyc
 
     public IJSONThrowableConverter getJSONThrowableConverter();
 
-    public JSONDateFormatCached getJSONDateFormatCached();
+    public DateTimeFormatter getJSONDateTimeFormatter();
 
     public Map<String, Object> convertEvent(E event);
 }

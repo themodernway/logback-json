@@ -16,13 +16,15 @@
 
 package com.themodernway.logback.json.core.layout;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.TimeZone;
 
 import com.themodernway.logback.json.core.IJSONFormatter;
 import com.themodernway.logback.json.core.IJSONThrowableConverter;
-import com.themodernway.logback.json.core.JSONDateFormatCached;
 import com.themodernway.logback.json.core.JSONFormattingException;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
@@ -39,7 +41,7 @@ public class JSONLayout extends LayoutBase<ILoggingEvent> implements IJSONLayout
 {
     private String                  m_dpattern                = ISO8601_PATTERNZ;
 
-    private TimeZone                m_timezone                = DEFAULT_TIMEZONE_VALUE;
+    private ZoneId                  m_timezone                = DEFAULT_TIMEZONE_VALUE;
 
     private JSONLayoutEnhancer      m_enhancer                = nulled();
 
@@ -95,7 +97,7 @@ public class JSONLayout extends LayoutBase<ILoggingEvent> implements IJSONLayout
 
     private IJSONThrowableConverter m_jsonthrowable_converter = new JSONListThrowableConverter();
 
-    private JSONDateFormatCached    m_threadlocal_date_format = nulled();
+    private DateTimeFormatter       m_json_datetime_formatter = nulled();
 
     public JSONLayout()
     {
@@ -121,7 +123,7 @@ public class JSONLayout extends LayoutBase<ILoggingEvent> implements IJSONLayout
         {
             converter.start();
         }
-        m_threadlocal_date_format = new JSONDateFormatCached(getDatePattern(), getTimeZone());
+        m_json_datetime_formatter = new DateTimeFormatterBuilder().appendPattern(getDatePattern()).toFormatter().withZone(getTimeZone());
 
         super.start();
     }
@@ -189,7 +191,7 @@ public class JSONLayout extends LayoutBase<ILoggingEvent> implements IJSONLayout
         {
             enhance.before(target, this, event);
         }
-        append(target, toTrimOrElse(getTimeStampLabel(), DEFAULT_TIMESTAMP_LABEL), getShowTimeStamp(), () -> getJSONDateFormatCached().format(event.getTimeStamp()));
+        append(target, toTrimOrElse(getTimeStampLabel(), DEFAULT_TIMESTAMP_LABEL), getShowTimeStamp(), () -> getJSONDateTimeFormatter().format(Instant.ofEpochMilli(event.getTimeStamp())));
 
         append(target, toTrimOrElse(getUniqueIdLabel(), DEFAULT_UNIQUE_ID_LABEL), getShowUniqueId(), this::uuid);
 
@@ -253,9 +255,9 @@ public class JSONLayout extends LayoutBase<ILoggingEvent> implements IJSONLayout
     }
 
     @Override
-    public JSONDateFormatCached getJSONDateFormatCached()
+    public DateTimeFormatter getJSONDateTimeFormatter()
     {
-        return m_threadlocal_date_format;
+        return m_json_datetime_formatter;
     }
 
     public void setRawMessageLabel(final String label)
@@ -513,11 +515,11 @@ public class JSONLayout extends LayoutBase<ILoggingEvent> implements IJSONLayout
 
     public void setTimeZone(final String tz)
     {
-        m_timezone = TimeZone.getTimeZone(tz);
+        m_timezone = ZoneId.of(tz);
     }
 
     @Override
-    public TimeZone getTimeZone()
+    public ZoneId getTimeZone()
     {
         return requireNonNullOrElse(m_timezone, DEFAULT_TIMEZONE_VALUE);
     }
