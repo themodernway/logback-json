@@ -22,19 +22,31 @@ import java.util.Map;
  * A {@code IJSONFormatter} interface formats an object into a JSON string.
  *
  * @author Dean S. Jones
- * @since 2.0.0-SNAPSHOT
+ * @since 2.0.6-SNAPSHOT
  */
 
 public interface IJSONFormatter
 {
+    /**
+     * Returns <tt>true</tt> if this IJSONFormatter is in pretty printing mode.
+     *
+     * @return <tt>true</tt> if this IJSONFormatter is in pretty printing mode.
+     */
+
     public boolean isPretty();
+
+    /**
+     * Sets this IJSONFormatter pretty printing mode.
+     *
+     * @param pretty <tt>true</tt> or <tt>false</tt> for pretty printing mode.
+     */
 
     public void setPretty(final boolean pretty);
 
     /**
      * Converts the specified target into a JSON string.
      *
-     * @param target the object to be converted.
+     * @param target the Map to be converted.
      * @return a JSON String representation of the target.
      * @throws JSONFormattingException if there was an error converting the target to a String.
      */
