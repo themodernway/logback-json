@@ -32,8 +32,6 @@ public class JSONListThrowableConverter implements IJSONThrowableConverter, IJSO
 {
     private int                 m_maxdeep;
 
-    private final List<Object>  m_buflist = new ArrayList<>(32);
-
     private final AtomicBoolean m_started = new AtomicBoolean(false);
 
     public JSONListThrowableConverter()
@@ -56,17 +54,10 @@ public class JSONListThrowableConverter implements IJSONThrowableConverter, IJSO
         return m_maxdeep;
     }
 
-    public List<Object> getBufferListCleared()
-    {
-        m_buflist.clear();
-
-        return m_buflist;
-    }
-
     @Override
     public Supplier<Object> supplier(final ILoggingEvent event)
     {
-        return () -> nullOrOtherwise(event.getThrowableProxy(), tp -> toListOrNull(recursive(getBufferListCleared(), tp, 0)));
+        return () -> nullOrOtherwise(event.getThrowableProxy(), tp -> toListOrNull(recursive(new ArrayList<>(32), tp, 0)));
     }
 
     protected List<Object> recursive(final List<Object> list, final IThrowableProxy tp, final int deep)
