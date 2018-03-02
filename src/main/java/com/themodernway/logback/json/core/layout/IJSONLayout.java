@@ -51,8 +51,6 @@ public interface IJSONLayout<E> extends IJSONPrettyPrinter, IJSONCommon, LifeCyc
 
     public String getLoggerNameLabel();
 
-    public String getLineSeparator();
-
     public boolean getShowRawMessage();
 
     public boolean getShowArguments();

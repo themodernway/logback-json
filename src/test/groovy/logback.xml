@@ -29,6 +29,7 @@
 				<MDCLabel>state</MDCLabel>
 				<Pretty>false</Pretty>
 			</layout>
+			<charset>UTF-8</charset>
 		</encoder>
 	</appender>
 	<root level="INFO">

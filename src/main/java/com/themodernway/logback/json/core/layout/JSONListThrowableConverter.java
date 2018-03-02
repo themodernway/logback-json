@@ -32,7 +32,7 @@ public class JSONListThrowableConverter implements IJSONThrowableConverter, IJSO
 {
     private int                 m_maxdeep;
 
-    private final List<Object>  m_buflist = new ArrayList<>(64);
+    private final List<Object>  m_buflist = new ArrayList<>(32);
 
     private final AtomicBoolean m_started = new AtomicBoolean(false);
 

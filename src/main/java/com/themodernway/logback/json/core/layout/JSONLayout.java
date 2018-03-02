@@ -71,8 +71,6 @@ public class JSONLayout extends LayoutBase<ILoggingEvent> implements IJSONLayout
 
     private boolean                 m_show_formatted_message  = true;
 
-    private String                  m_line_separator          = LINE_SEPARATOR_STRING;
-
     private String                  m_mdc_label               = DEFAULT_MDC_LABEL;
 
     private String                  m_unique_id_label         = DEFAULT_UNIQUE_ID_LABEL;
@@ -170,7 +168,7 @@ public class JSONLayout extends LayoutBase<ILoggingEvent> implements IJSONLayout
         }
         try
         {
-            return getJSONFormatter().toJSONString(target) + requireNonNullOrElse(getLineSeparator(), LINE_SEPARATOR_STRING);
+            return getJSONFormatter().toJSONString(target) + LINE_SEPARATOR_STRING;
         }
         catch (final JSONFormattingException e)
         {
@@ -183,7 +181,7 @@ public class JSONLayout extends LayoutBase<ILoggingEvent> implements IJSONLayout
     @Override
     public Map<String, Object> convertEvent(final ILoggingEvent event)
     {
-        final Map<String, Object> target = new LinkedHashMap<>();
+        final Map<String, Object> target = new LinkedHashMap<>(12);
 
         final JSONLayoutEnhancer enhance = getJSONLayoutEnhancer();
 
@@ -218,17 +216,6 @@ public class JSONLayout extends LayoutBase<ILoggingEvent> implements IJSONLayout
             enhance.finish(target, this, event);
         }
         return target;
-    }
-
-    public void setLineSeparator(final String sepr)
-    {
-        m_line_separator = sepr;
-    }
-
-    @Override
-    public String getLineSeparator()
-    {
-        return m_line_separator;
     }
 
     @Override
