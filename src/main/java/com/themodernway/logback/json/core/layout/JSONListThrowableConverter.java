@@ -57,13 +57,7 @@ public class JSONListThrowableConverter implements IJSONThrowableConverter, IJSO
     @Override
     public Supplier<Object> supplier(final ILoggingEvent event)
     {
-        final IThrowableProxy tp = event.getThrowableProxy();
-
-        if (null == tp)
-        {
-            return () -> null;
-        }
-        return () -> toListOrNull(recursive(new ArrayList<>(), tp, 0));
+        return () -> nullOrOtherwise(event.getThrowableProxy(), (tp) -> toListOrNull(recursive(new ArrayList<>(48), tp, 0)));
     }
 
     protected List<Object> recursive(final List<Object> list, final IThrowableProxy tp, final int deep)
@@ -110,7 +104,7 @@ public class JSONListThrowableConverter implements IJSONThrowableConverter, IJSO
 
             for (int i = 0; i < size; i++)
             {
-                list.add(elements[i].getStackTraceElement().toString());
+                list.add(toString(elements[i].getStackTraceElement()));
             }
         }
     }

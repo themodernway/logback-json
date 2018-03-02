@@ -22,9 +22,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.function.Supplier;
-
-import ch.qos.logback.core.CoreConstants;
 
 /**
  * A {@code IJSONCommon} interface that has common methods and constants.
@@ -35,17 +34,17 @@ import ch.qos.logback.core.CoreConstants;
 
 public interface IJSONCommon
 {
+    public static final String   EMPTY_STRING                    = "";
+
     public static final String   JSON_INDENT_VALUE               = "  ";
+
+    public static final String   ZONE_STRING_VALUE               = "UTC";
+
+    public static final String   NULL_STRING_VALUE               = "null";
 
     public static final String   CONTENT_TYPE_JSON               = "application/json";
 
-    public static final String   NEWLINE_STRING                  = CoreConstants.LINE_SEPARATOR;
-
-    public static final String   EMPTY_STRING                    = CoreConstants.EMPTY_STRING;
-
     public static final String   ISO8601_PATTERNZ                = "yyyy-MM-dd HH:mm:ss,SSS z";
-
-    public static final TimeZone DEFAULT_TIMEZONE                = TimeZone.getTimeZone("UTC");
 
     public static final String   DEFAULT_MDC_LABEL               = "mdc";
 
@@ -69,6 +68,21 @@ public interface IJSONCommon
 
     public static final String   DEFAULT_FORMATTED_MESSAGE_LABEL = "message";
 
+    public static final String   LINE_SEPARATOR_STRING           = System.lineSeparator();
+
+    public static final TimeZone DEFAULT_TIMEZONE_VALUE          = TimeZone.getTimeZone(ZONE_STRING_VALUE);
+
+    default <T> T nulled()
+    {
+        return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    default <T> T casted(final Object valu)
+    {
+        return ((T) valu);
+    }
+
     default long getTimeNow()
     {
         return System.currentTimeMillis();
@@ -77,6 +91,11 @@ public interface IJSONCommon
     default String uuid()
     {
         return UUID.randomUUID().toString();
+    }
+
+    default <T, R> R nullOrOtherwise(final T valu, final Function<T, R> otherwise)
+    {
+        return ((null == valu) ? nulled() : otherwise.apply(valu));
     }
 
     default List<Object> asList(final boolean empty, final Object[] args)
@@ -97,24 +116,24 @@ public interface IJSONCommon
 
         if ((false == empty) && (list.isEmpty()))
         {
-            return null;
+            return nulled();
         }
         return list;
     }
 
     default <T> List<T> toListOrNull(final List<T> list)
     {
-        return ((null == list) || (list.isEmpty())) ? null : list;
+        return ((null == list) || (list.isEmpty())) ? nulled() : list;
     }
 
     default String toString(final Object valu)
     {
-        return (null != valu ? valu.toString() : "null");
+        return (null != valu ? valu.toString() : NULL_STRING_VALUE);
     }
 
     default String toStringOrNull(final Object valu)
     {
-        return (null != valu ? valu.toString() : null);
+        return (null != valu ? valu.toString() : nulled());
     }
 
     default String toStringOrElse(final Object valu, final String otherwise)
@@ -131,13 +150,13 @@ public interface IJSONCommon
     {
         if ((null == string) || (string.isEmpty()))
         {
-            return null;
+            return nulled();
         }
         string = string.trim();
 
         if (string.isEmpty())
         {
-            return null;
+            return nulled();
         }
         return string;
     }
@@ -164,13 +183,18 @@ public interface IJSONCommon
 
     default void append(final Map<String, Object> target, final String name, final boolean flag, final Supplier<Object> supplier)
     {
-        if ((flag) && (null != name))
+        if (flag)
         {
-            final Object valu = supplier.get();
+            final String labl = toTrimOrNull(name);
 
-            if (null != valu)
+            if (null != labl)
             {
-                target.put(name, valu);
+                final Object valu = supplier.get();
+
+                if (null != valu)
+                {
+                    target.put(labl, valu);
+                }
             }
         }
     }

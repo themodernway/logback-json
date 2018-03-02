@@ -39,11 +39,11 @@ public class JSONLayout extends LayoutBase<ILoggingEvent> implements IJSONLayout
 {
     private String                  m_dpattern                = ISO8601_PATTERNZ;
 
-    private TimeZone                m_timezone                = DEFAULT_TIMEZONE;
+    private TimeZone                m_timezone                = DEFAULT_TIMEZONE_VALUE;
 
-    private JSONLayoutEnhancer      m_enhancer;
+    private JSONLayoutEnhancer      m_enhancer                = nulled();
 
-    private IJSONFormatter          m_formatter;
+    private IJSONFormatter          m_formatter               = nulled();
 
     private boolean                 m_is_pretty               = true;
 
@@ -69,7 +69,7 @@ public class JSONLayout extends LayoutBase<ILoggingEvent> implements IJSONLayout
 
     private boolean                 m_show_formatted_message  = true;
 
-    private String                  m_line_feed               = NEWLINE_STRING;
+    private String                  m_line_separator          = LINE_SEPARATOR_STRING;
 
     private String                  m_mdc_label               = DEFAULT_MDC_LABEL;
 
@@ -95,7 +95,7 @@ public class JSONLayout extends LayoutBase<ILoggingEvent> implements IJSONLayout
 
     private IJSONThrowableConverter m_jsonthrowable_converter = new JSONListThrowableConverter();
 
-    private JSONDateFormatCached    m_threadlocal_date_format;
+    private JSONDateFormatCached    m_threadlocal_date_format = nulled();
 
     public JSONLayout()
     {
@@ -156,15 +156,19 @@ public class JSONLayout extends LayoutBase<ILoggingEvent> implements IJSONLayout
 
         if ((null == target) || (target.isEmpty()))
         {
+            addError("null or empty converted event.");
+
             return EMPTY_STRING;
         }
         if (null == getJSONFormatter())
         {
+            addError("null JSONFormatter.");
+
             return EMPTY_STRING;
         }
         try
         {
-            return getJSONFormatter().toJSONString(target) + requireNonNullOrElse(getLineFeed(), NEWLINE_STRING);
+            return getJSONFormatter().toJSONString(target) + requireNonNullOrElse(getLineSeparator(), LINE_SEPARATOR_STRING);
         }
         catch (final JSONFormattingException e)
         {
@@ -214,15 +218,15 @@ public class JSONLayout extends LayoutBase<ILoggingEvent> implements IJSONLayout
         return target;
     }
 
-    public void setLineFeed(final String line)
+    public void setLineSeparator(final String sepr)
     {
-        m_line_feed = line;
+        m_line_separator = sepr;
     }
 
     @Override
-    public String getLineFeed()
+    public String getLineSeparator()
     {
-        return m_line_feed;
+        return m_line_separator;
     }
 
     @Override
@@ -515,7 +519,7 @@ public class JSONLayout extends LayoutBase<ILoggingEvent> implements IJSONLayout
     @Override
     public TimeZone getTimeZone()
     {
-        return requireNonNullOrElse(m_timezone, DEFAULT_TIMEZONE);
+        return requireNonNullOrElse(m_timezone, DEFAULT_TIMEZONE_VALUE);
     }
 
     public void setJSONThrowableConverter(final IJSONThrowableConverter converter)
