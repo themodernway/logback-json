@@ -57,7 +57,7 @@ public class JSONListThrowableConverter implements IJSONThrowableConverter, IJSO
     @Override
     public Supplier<Object> supplier(final ILoggingEvent event)
     {
-        return () -> nullOrOtherwise(event.getThrowableProxy(), (tp) -> toListOrNull(recursive(new ArrayList<>(48), tp, 0)));
+        return () -> nullOrOtherwise(event.getThrowableProxy(), tp -> toListOrNull(recursive(new ArrayList<>(48), tp, 0)));
     }
 
     protected List<Object> recursive(final List<Object> list, final IThrowableProxy tp, final int deep)
