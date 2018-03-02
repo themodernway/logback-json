@@ -155,20 +155,15 @@ public interface IJSONCommon
         return (null != valu ? valu : otherwise.get());
     }
 
-    default void append(final Map<String, Object> target, final Supplier<String> label, final boolean flag, final Supplier<Object> supplier)
+    default void append(final Map<String, Object> target, final String name, final boolean flag, final Supplier<Object> supplier)
     {
-        if (flag)
+        if ((flag) && (null != name))
         {
-            final String name = toTrimOrNull(label.get());
+            final Object valu = supplier.get();
 
-            if (null != name)
+            if (null != valu)
             {
-                final Object valu = supplier.get();
-
-                if (null != valu)
-                {
-                    target.put(name, valu);
-                }
+                target.put(name, valu);
             }
         }
     }

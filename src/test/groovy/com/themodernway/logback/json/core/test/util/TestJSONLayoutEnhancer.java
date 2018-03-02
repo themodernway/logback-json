@@ -88,14 +88,14 @@ public class TestJSONLayoutEnhancer implements JSONLayoutEnhancer, IJSONCommon
     @Override
     public void before(final Map<String, Object> target, final IJSONLayout<ILoggingEvent> layout, final ILoggingEvent event)
     {
-        append(target, () -> "beg", true, () -> layout.getJSONDateFormatCached().format(getTimeNow()));
+        append(target, "beg", true, () -> layout.getJSONDateFormatCached().format(getTimeNow()));
 
-        append(target, () -> toTrimOrElse(getHostNameLabel(), DEFAULT_HOSTNAME_LABEL), getShowHostName(), () -> toTrimOrElse(getHostName(), COMPUTE_HOSTNAME));
+        append(target, toTrimOrElse(getHostNameLabel(), DEFAULT_HOSTNAME_LABEL), getShowHostName(), () -> toTrimOrElse(getHostName(), COMPUTE_HOSTNAME));
     }
 
     @Override
     public void finish(final Map<String, Object> target, final IJSONLayout<ILoggingEvent> layout, final ILoggingEvent event)
     {
-        append(target, () -> "end", true, () -> layout.getJSONDateFormatCached().format(getTimeNow()));
+        append(target, "end", true, () -> layout.getJSONDateFormatCached().format(getTimeNow()));
     }
 }

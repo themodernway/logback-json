@@ -30,65 +30,65 @@ import ch.qos.logback.core.LayoutBase;
 
 public class JSONLayout extends LayoutBase<ILoggingEvent> implements IJSONLayout<ILoggingEvent>
 {
-    private String                                  m_dpattern                = ISO8601_PATTERNZ;
+    private String                  m_dpattern                = ISO8601_PATTERNZ;
 
-    private TimeZone                                m_timezone                = DEFAULT_TIMEZONE;
+    private TimeZone                m_timezone                = DEFAULT_TIMEZONE;
 
-    private JSONLayoutEnhancer                      m_enhancer;
+    private JSONLayoutEnhancer      m_enhancer;
 
-    private IJSONFormatter                          m_formatter;
+    private IJSONFormatter          m_formatter;
 
-    private boolean                                 m_is_pretty               = true;
+    private boolean                 m_is_pretty               = true;
 
-    private boolean                                 m_show_mdc                = true;
+    private boolean                 m_show_mdc                = true;
 
-    private boolean                                 m_show_unique_id          = true;
+    private boolean                 m_show_unique_id          = true;
 
-    private boolean                                 m_show_timestamp          = true;
+    private boolean                 m_show_timestamp          = true;
 
-    private boolean                                 m_show_exception          = true;
+    private boolean                 m_show_exception          = true;
 
-    private boolean                                 m_show_arguments          = true;
+    private boolean                 m_show_arguments          = true;
 
-    private boolean                                 m_show_log_level          = true;
+    private boolean                 m_show_log_level          = true;
 
-    private boolean                                 m_show_raw_message        = true;
+    private boolean                 m_show_raw_message        = true;
 
-    private boolean                                 m_show_thread_name        = true;
+    private boolean                 m_show_thread_name        = true;
 
-    private boolean                                 m_show_logger_name        = true;
+    private boolean                 m_show_logger_name        = true;
 
-    private boolean                                 m_show_context_name       = true;
+    private boolean                 m_show_context_name       = true;
 
-    private boolean                                 m_show_formatted_message  = true;
+    private boolean                 m_show_formatted_message  = true;
 
-    private String                                  m_line_feed               = NEWLINE_STRING;
+    private String                  m_line_feed               = NEWLINE_STRING;
 
-    private String                                  m_mdc_label               = DEFAULT_MDC_LABEL;
+    private String                  m_mdc_label               = DEFAULT_MDC_LABEL;
 
-    private String                                  m_unique_id_label         = DEFAULT_UNIQUE_ID_LABEL;
+    private String                  m_unique_id_label         = DEFAULT_UNIQUE_ID_LABEL;
 
-    private String                                  m_timestamp_label         = DEFAULT_TIMESTAMP_LABEL;
+    private String                  m_timestamp_label         = DEFAULT_TIMESTAMP_LABEL;
 
-    private String                                  m_exception_label         = DEFAULT_EXCEPTION_LABEL;
+    private String                  m_exception_label         = DEFAULT_EXCEPTION_LABEL;
 
-    private String                                  m_arguments_label         = DEFAULT_ARGUMENTS_LABEL;
+    private String                  m_arguments_label         = DEFAULT_ARGUMENTS_LABEL;
 
-    private String                                  m_log_level_label         = DEFAULT_LOG_LEVEL_LABEL;
+    private String                  m_log_level_label         = DEFAULT_LOG_LEVEL_LABEL;
 
-    private String                                  m_raw_message_label       = DEFAULT_RAW_MESSAGE_LABEL;
+    private String                  m_raw_message_label       = DEFAULT_RAW_MESSAGE_LABEL;
 
-    private String                                  m_thread_name_label       = DEFAULT_THREAD_NAME_LABEL;
+    private String                  m_thread_name_label       = DEFAULT_THREAD_NAME_LABEL;
 
-    private String                                  m_logger_name_label       = DEFAULT_LOGGER_NAME_LABEL;
+    private String                  m_logger_name_label       = DEFAULT_LOGGER_NAME_LABEL;
 
-    private String                                  m_context_name_label      = DEFAULT_CONTEXT_NAME_LABEL;
+    private String                  m_context_name_label      = DEFAULT_CONTEXT_NAME_LABEL;
 
-    private String                                  m_formatted_message_label = DEFAULT_FORMATTED_MESSAGE_LABEL;
+    private String                  m_formatted_message_label = DEFAULT_FORMATTED_MESSAGE_LABEL;
 
-    private IJSONThrowableConverter                 m_jsonthrowable_converter = new JSONListThrowableConverter();
+    private IJSONThrowableConverter m_jsonthrowable_converter = new JSONListThrowableConverter();
 
-    private final ThreadLocal<JSONDateFormatCached> m_threadlocal_date_format = ThreadLocal.withInitial(() -> new JSONDateFormatCached(getDatePattern(), getTimeZone()));
+    private JSONDateFormatCached    m_threadlocal_date_format;
 
     public JSONLayout()
     {
@@ -114,6 +114,8 @@ public class JSONLayout extends LayoutBase<ILoggingEvent> implements IJSONLayout
         {
             converter.start();
         }
+        m_threadlocal_date_format = new JSONDateFormatCached(getDatePattern(), getTimeZone());
+
         super.start();
     }
 
@@ -176,27 +178,27 @@ public class JSONLayout extends LayoutBase<ILoggingEvent> implements IJSONLayout
         {
             enhance.before(target, this, event);
         }
-        append(target, () -> toTrimOrElse(getTimeStampLabel(), DEFAULT_TIMESTAMP_LABEL), getShowTimeStamp(), () -> getJSONDateFormatCached().format(event.getTimeStamp()));
+        append(target, toTrimOrElse(getTimeStampLabel(), DEFAULT_TIMESTAMP_LABEL), getShowTimeStamp(), () -> getJSONDateFormatCached().format(event.getTimeStamp()));
 
-        append(target, () -> toTrimOrElse(getUniqueIdLabel(), DEFAULT_UNIQUE_ID_LABEL), getShowUniqueId(), this::uuid);
+        append(target, toTrimOrElse(getUniqueIdLabel(), DEFAULT_UNIQUE_ID_LABEL), getShowUniqueId(), this::uuid);
 
-        append(target, () -> toTrimOrElse(getLogLevelLabel(), DEFAULT_LOG_LEVEL_LABEL), getShowLogLevel(), () -> toString(event.getLevel()));
+        append(target, toTrimOrElse(getLogLevelLabel(), DEFAULT_LOG_LEVEL_LABEL), getShowLogLevel(), () -> toString(event.getLevel()));
 
-        append(target, () -> toTrimOrElse(getThreadNameLabel(), DEFAULT_THREAD_NAME_LABEL), getShowThreadName(), event::getThreadName);
+        append(target, toTrimOrElse(getThreadNameLabel(), DEFAULT_THREAD_NAME_LABEL), getShowThreadName(), event::getThreadName);
 
-        append(target, () -> toTrimOrElse(getLoggerNameLabel(), DEFAULT_LOGGER_NAME_LABEL), getShowLoggerName(), event::getLoggerName);
+        append(target, toTrimOrElse(getLoggerNameLabel(), DEFAULT_LOGGER_NAME_LABEL), getShowLoggerName(), event::getLoggerName);
 
-        append(target, () -> toTrimOrElse(getFormattedMessageLabel(), DEFAULT_FORMATTED_MESSAGE_LABEL), getShowFormattedMessage(), event::getFormattedMessage);
+        append(target, toTrimOrElse(getFormattedMessageLabel(), DEFAULT_FORMATTED_MESSAGE_LABEL), getShowFormattedMessage(), event::getFormattedMessage);
 
-        append(target, () -> toTrimOrElse(getRawMessageLabel(), DEFAULT_RAW_MESSAGE_LABEL), getShowRawMessage(), event::getMessage);
+        append(target, toTrimOrElse(getRawMessageLabel(), DEFAULT_RAW_MESSAGE_LABEL), getShowRawMessage(), event::getMessage);
 
-        append(target, () -> toTrimOrElse(getArgumentsLabel(), DEFAULT_ARGUMENTS_LABEL), getShowArguments(), () -> asList(true, event.getArgumentArray()));
+        append(target, toTrimOrElse(getArgumentsLabel(), DEFAULT_ARGUMENTS_LABEL), getShowArguments(), () -> asList(true, event.getArgumentArray()));
 
-        append(target, () -> toTrimOrElse(getContextNameLabel(), DEFAULT_CONTEXT_NAME_LABEL), getShowContextName(), () -> event.getLoggerContextVO().getName());
+        append(target, toTrimOrElse(getContextNameLabel(), DEFAULT_CONTEXT_NAME_LABEL), getShowContextName(), () -> event.getLoggerContextVO().getName());
 
-        append(target, () -> toTrimOrElse(getMDCLabel(), DEFAULT_MDC_LABEL), getShowMDC(), event::getMDCPropertyMap);
+        append(target, toTrimOrElse(getMDCLabel(), DEFAULT_MDC_LABEL), getShowMDC(), event::getMDCPropertyMap);
 
-        append(target, () -> toTrimOrElse(getExceptionLabel(), DEFAULT_EXCEPTION_LABEL), getShowException() && (null != event.getThrowableProxy()), getJSONThrowableConverter().supplier(event));
+        append(target, toTrimOrElse(getExceptionLabel(), DEFAULT_EXCEPTION_LABEL), getShowException() && (null != event.getThrowableProxy()), getJSONThrowableConverter().supplier(event));
 
         if (null != enhance)
         {
@@ -241,7 +243,7 @@ public class JSONLayout extends LayoutBase<ILoggingEvent> implements IJSONLayout
     @Override
     public JSONDateFormatCached getJSONDateFormatCached()
     {
-        return m_threadlocal_date_format.get();
+        return m_threadlocal_date_format;
     }
 
     public void setRawMessageLabel(final String label)

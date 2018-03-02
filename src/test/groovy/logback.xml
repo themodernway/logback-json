@@ -27,7 +27,7 @@
 				<ShowContextName>false</ShowContextName>
 				<TimeZone>GMT</TimeZone>
 				<MDCLabel>state</MDCLabel>
-				<Pretty>true</Pretty>
+				<Pretty>false</Pretty>
 			</layout>
 		</encoder>
 	</appender>
