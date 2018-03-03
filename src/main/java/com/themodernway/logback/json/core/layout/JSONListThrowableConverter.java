@@ -51,10 +51,19 @@ public class JSONListThrowableConverter implements IJSONThrowableConverter, IJSO
         return m_maxdeep;
     }
 
+    public List<String> getFreshBufferList()
+    {
+        final List<String> list = m_getlist.get();
+
+        list.clear();
+
+        return list;
+    }
+
     @Override
     public Supplier<Object> supplier(final ILoggingEvent event)
     {
-        return () -> nullOrOtherwise(event.getThrowableProxy(), tp -> toListOrNull(recursive(m_getlist.get(), tp, 0)));
+        return () -> nullOrOtherwise(event.getThrowableProxy(), tp -> toListOrNull(recursive(getFreshBufferList(), tp, 0)));
     }
 
     protected List<String> recursive(final List<String> list, final IThrowableProxy tp, final int deep)
