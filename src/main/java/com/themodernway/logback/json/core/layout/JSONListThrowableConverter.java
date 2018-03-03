@@ -30,18 +30,15 @@ import ch.qos.logback.classic.spi.StackTraceElementProxy;
 
 public class JSONListThrowableConverter implements IJSONThrowableConverter, IJSONCommon
 {
-    private int                 m_maxdeep;
+    private int                             m_maxdeep;
 
-    private final AtomicBoolean m_started = new AtomicBoolean(false);
+    private final AtomicBoolean             m_started = new AtomicBoolean(false);
+
+    private final ThreadLocal<List<String>> m_getlist = ThreadLocal.withInitial(() -> new ArrayList<>(32));
 
     public JSONListThrowableConverter()
     {
-        this(Integer.MAX_VALUE - 1);
-    }
-
-    public JSONListThrowableConverter(final int maxdeep)
-    {
-        setMaxDepth(maxdeep);
+        m_maxdeep = (Integer.MAX_VALUE - 1);
     }
 
     public void setMaxDepth(final int maxdeep)
@@ -57,10 +54,10 @@ public class JSONListThrowableConverter implements IJSONThrowableConverter, IJSO
     @Override
     public Supplier<Object> supplier(final ILoggingEvent event)
     {
-        return () -> nullOrOtherwise(event.getThrowableProxy(), tp -> toListOrNull(recursive(new ArrayList<>(32), tp, 0)));
+        return () -> nullOrOtherwise(event.getThrowableProxy(), tp -> toListOrNull(recursive(m_getlist.get(), tp, 0)));
     }
 
-    protected List<Object> recursive(final List<Object> list, final IThrowableProxy tp, final int deep)
+    protected List<String> recursive(final List<String> list, final IThrowableProxy tp, final int deep)
     {
         if ((null == tp) || (deep >= getMaxDepth()))
         {
@@ -94,7 +91,7 @@ public class JSONListThrowableConverter implements IJSONThrowableConverter, IJSO
         return list;
     }
 
-    protected void stack(final List<Object> list, final IThrowableProxy tp)
+    protected void stack(final List<String> list, final IThrowableProxy tp)
     {
         final StackTraceElementProxy[] elements = tp.getStackTraceElementProxyArray();
 
