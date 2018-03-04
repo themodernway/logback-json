@@ -53,6 +53,8 @@ SonarQube URL:
 
 https://sonarcloud.io/dashboard?id=com.themodernway%3Alogback-json-core
 
+![alt SonarQube](https://sonarcloud.io/api/project_badges/quality_gate?project=com.themodernway%3Alogback-json-core "SonarQube")
+
 License:
 
 Copyright (c) 2018, The Modern Way. All rights reserved.
