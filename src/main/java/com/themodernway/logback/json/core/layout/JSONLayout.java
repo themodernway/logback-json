@@ -43,9 +43,9 @@ public class JSONLayout extends LayoutBase<ILoggingEvent> implements IJSONLayout
 
     private ZoneId                  m_timezone                = DEFAULT_TIMEZONE_VALUE;
 
-    private JSONLayoutEnhancer      m_enhancer                = nulled();
+    private JSONLayoutEnhancer      m_enhancer;
 
-    private IJSONFormatter          m_formatter               = nulled();
+    private IJSONFormatter          m_formatter;
 
     private boolean                 m_is_pretty               = true;
 
@@ -93,9 +93,9 @@ public class JSONLayout extends LayoutBase<ILoggingEvent> implements IJSONLayout
 
     private String                  m_formatted_message_label = DEFAULT_FORMATTED_MESSAGE_LABEL;
 
-    private IJSONThrowableConverter m_jsonthrowable_converter = new JSONListThrowableConverter();
+    private IJSONThrowableConverter m_jsonthrowable_converter = new JSONThrowableListConverter();
 
-    private DateTimeFormatter       m_json_datetime_formatter = nulled();
+    private DateTimeFormatter       m_json_datetime_formatter;
 
     public JSONLayout()
     {
@@ -168,7 +168,7 @@ public class JSONLayout extends LayoutBase<ILoggingEvent> implements IJSONLayout
         }
         try
         {
-            return getJSONFormatter().toJSONString(target) + LINE_SEPARATOR_STRING;
+            return getJSONFormatter().toJSONString(target, LINE_SEPARATOR_STRING).toString();
         }
         catch (final JSONFormattingException e)
         {

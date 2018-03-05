@@ -72,17 +72,6 @@ public interface IJSONCommon
 
     public static final ZoneId DEFAULT_TIMEZONE_VALUE          = ZoneId.of(ZONE_STRING_VALUE);
 
-    default <T> T nulled()
-    {
-        return null;
-    }
-
-    @SuppressWarnings("unchecked")
-    default <T> T casted(final Object valu)
-    {
-        return ((T) valu);
-    }
-
     default String uuid()
     {
         return UUID.randomUUID().toString();
@@ -90,7 +79,7 @@ public interface IJSONCommon
 
     default <T, R> R nullOrOtherwise(final T valu, final Function<T, R> otherwise)
     {
-        return ((null == valu) ? nulled() : otherwise.apply(valu));
+        return ((null == valu) ? null : otherwise.apply(valu));
     }
 
     default List<Object> asList(final boolean empty, final Object[] args)
@@ -101,7 +90,7 @@ public interface IJSONCommon
     @SuppressWarnings("unchecked")
     default <T> List<T> toList(final T... args)
     {
-        return (null == args) ? Collections.emptyList() : Arrays.asList(args);
+        return ((null == args) ? Collections.emptyList() : Arrays.asList(args));
     }
 
     @SuppressWarnings("unchecked")
@@ -109,49 +98,45 @@ public interface IJSONCommon
     {
         final List<T> list = toList(args);
 
-        if ((false == empty) && (list.isEmpty()))
-        {
-            return nulled();
-        }
-        return list;
+        return (((false == empty) && (list.isEmpty())) ? null : list);
     }
 
     default <T> List<T> toListOrNull(final List<T> list)
     {
-        return ((null == list) || (list.isEmpty())) ? nulled() : list;
+        return (((null == list) || (list.isEmpty())) ? null : list);
     }
 
     default String toString(final Object valu)
     {
-        return (null != valu ? valu.toString() : NULL_STRING_VALUE);
+        return ((null != valu) ? valu.toString() : NULL_STRING_VALUE);
     }
 
     default String toStringOrNull(final Object valu)
     {
-        return (null != valu ? valu.toString() : nulled());
+        return ((null != valu) ? valu.toString() : null);
     }
 
     default String toStringOrElse(final Object valu, final String otherwise)
     {
-        return (null != valu ? valu.toString() : otherwise);
+        return ((null != valu) ? valu.toString() : otherwise);
     }
 
     default String toStringOrElse(final Object valu, final Supplier<String> otherwise)
     {
-        return (null != valu ? valu.toString() : otherwise.get());
+        return ((null != valu) ? valu.toString() : otherwise.get());
     }
 
     default String toTrimOrNull(String string)
     {
         if ((null == string) || (string.isEmpty()))
         {
-            return nulled();
+            return null;
         }
         string = string.trim();
 
         if (string.isEmpty())
         {
-            return nulled();
+            return null;
         }
         return string;
     }
@@ -168,12 +153,12 @@ public interface IJSONCommon
 
     default <T> T requireNonNullOrElse(final T valu, final T otherwise)
     {
-        return (null != valu ? valu : otherwise);
+        return ((null != valu) ? valu : otherwise);
     }
 
     default <T> T requireNonNullOrElse(final T valu, final Supplier<T> otherwise)
     {
-        return (null != valu ? valu : otherwise.get());
+        return ((null != valu) ? valu : otherwise.get());
     }
 
     default void append(final Map<String, Object> target, final String name, final boolean flag, final Supplier<Object> supplier)

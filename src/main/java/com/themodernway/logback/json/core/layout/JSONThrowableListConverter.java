@@ -16,9 +16,7 @@
 
 package com.themodernway.logback.json.core.layout;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 
 import com.themodernway.logback.json.core.IJSONCommon;
@@ -28,15 +26,15 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.IThrowableProxy;
 import ch.qos.logback.classic.spi.StackTraceElementProxy;
 
-public class JSONListThrowableConverter implements IJSONThrowableConverter, IJSONCommon
+public class JSONThrowableListConverter implements IJSONThrowableConverter, IJSONCommon
 {
     private int                             m_maxdeep;
 
-    private final AtomicBoolean             m_started = new AtomicBoolean(false);
+    private boolean                         m_started = false;
 
-    private final ThreadLocal<List<String>> m_getlist = ThreadLocal.withInitial(() -> new ArrayList<>(32));
+    private final ThreadLocal<List<String>> m_getlist = ThreadLocal.withInitial(() -> new JSONThrowableList(32));
 
-    public JSONListThrowableConverter()
+    public JSONThrowableListConverter()
     {
         m_maxdeep = (Integer.MAX_VALUE - 1);
     }
@@ -55,8 +53,10 @@ public class JSONListThrowableConverter implements IJSONThrowableConverter, IJSO
     {
         final List<String> list = m_getlist.get();
 
-        list.clear();
-
+        if (false == list.isEmpty())
+        {
+            list.clear();
+        }
         return list;
     }
 
@@ -66,47 +66,51 @@ public class JSONListThrowableConverter implements IJSONThrowableConverter, IJSO
         return () -> nullOrOtherwise(event.getThrowableProxy(), tp -> toListOrNull(recursive(getFreshBufferList(), tp, 0)));
     }
 
-    protected List<String> recursive(final List<String> list, final IThrowableProxy tp, final int deep)
+    protected List<String> recursive(final List<String> list, final IThrowableProxy prox, final int deep)
     {
-        if ((null == tp) || (deep >= getMaxDepth()))
+        if ((null == prox) || (deep >= getMaxDepth()))
         {
             return list;
         }
-        if (null != tp.getCause())
+        final IThrowableProxy caus = prox.getCause();
+
+        if (null != caus)
         {
-            recursive(list, tp.getCause(), deep + 1);
+            recursive(list, caus, deep + 1);
         }
-        final String mess = tp.getMessage();
+        final String mess = prox.getMessage();
 
         if (null == mess)
         {
-            list.add(tp.getClassName());
+            list.add(prox.getClassName());
         }
         else
         {
-            list.add(tp.getClassName() + "(" + mess + ")");
+            list.add(prox.getClassName() + "(" + mess + ")");
         }
-        stack(list, tp);
+        stack(list, prox);
 
-        final IThrowableProxy[] supp = tp.getSuppressed();
+        final IThrowableProxy[] supp = prox.getSuppressed();
 
         if (null != supp)
         {
-            for (final IThrowableProxy sp : supp)
+            final int size = supp.length;
+
+            for (int i = 0; i < size; i++)
             {
-                recursive(list, sp, deep + 1);
+                recursive(list, supp[i], deep + 1);
             }
         }
         return list;
     }
 
-    protected void stack(final List<String> list, final IThrowableProxy tp)
+    protected void stack(final List<String> list, final IThrowableProxy prox)
     {
-        final StackTraceElementProxy[] elements = tp.getStackTraceElementProxyArray();
+        final StackTraceElementProxy[] elements = prox.getStackTraceElementProxyArray();
 
         if (null != elements)
         {
-            final int size = elements.length - tp.getCommonFrames();
+            final int size = elements.length;
 
             for (int i = 0; i < size; i++)
             {
@@ -118,18 +122,18 @@ public class JSONListThrowableConverter implements IJSONThrowableConverter, IJSO
     @Override
     public void start()
     {
-        m_started.set(true);
+        m_started = true;
     }
 
     @Override
     public void stop()
     {
-        m_started.set(false);
+        m_started = false;
     }
 
     @Override
     public boolean isStarted()
     {
-        return m_started.get();
+        return m_started;
     }
 }
