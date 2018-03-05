@@ -84,11 +84,11 @@ public class TestJSONFormatter extends ObjectMapper implements IJSONFormatter, I
     }
 
     @Override
-    public String toJSONString(final Map<String, Object> target) throws JSONFormattingException
+    public StringBuilder toJSONString(final Map<String, Object> target, final String newline) throws JSONFormattingException
     {
         try
         {
-            return writeValueAsString(target);
+            return new StringBuilder(writeValueAsString(target)).append(newline);
         }
         catch (final JsonProcessingException e)
         {
