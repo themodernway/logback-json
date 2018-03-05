@@ -31,6 +31,7 @@ public interface IJSONFormatter extends IJSONPrettyPrinter
      * Converts the specified target into a JSON string.
      *
      * @param target the Map to be converted.
+     * @param newline to be added at the end.
      * @return a JSON String representation of the target.
      * @throws JSONFormattingException if there was an error converting the target to a String.
      */
