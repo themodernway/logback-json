@@ -36,5 +36,5 @@ public interface IJSONFormatter extends IJSONPrettyPrinter
      * @throws JSONFormattingException if there was an error converting the target to a String.
      */
 
-    public StringBuilder toJSONString(Map<String, Object> target, String newline) throws JSONFormattingException;
+    public String toJSONString(Map<String, Object> target) throws JSONFormattingException;
 }

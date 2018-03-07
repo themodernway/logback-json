@@ -168,7 +168,7 @@ public class JSONLayout extends LayoutBase<ILoggingEvent> implements IJSONLayout
         }
         try
         {
-            return getJSONFormatter().toJSONString(target, LINE_SEPARATOR_STRING).toString();
+            return getJSONFormatter().toJSONString(target) + LINE_SEPARATOR_STRING;
         }
         catch (final JSONFormattingException e)
         {
