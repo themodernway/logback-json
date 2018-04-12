@@ -16,16 +16,16 @@
 
 package com.themodernway.logback.json.core.test.util
 
-import static java.lang.System.err
-
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
+import groovy.transform.CompileStatic
 import spock.lang.Specification
 
-public abstract class AbstractSpecification extends Specification
+@CompileStatic
+public abstract class AbstractTestJSONSpecification extends Specification
 {
-    private Logger      m_logger
+    private Logger      m_logger = LoggerFactory.getLogger(getClass())
 
     private boolean     m_logging = true
 
@@ -34,21 +34,17 @@ public abstract class AbstractSpecification extends Specification
         m_logging = true
     }
 
-    public Logger logger()
+    def Logger logger()
     {
-        if (null == m_logger)
-        {
-            m_logger = LoggerFactory.getLogger(getClass())
-        }
         m_logger
     }
 
-    public void logging(boolean on = true)
+    def logging(boolean on = true)
     {
         m_logging = on
     }
 
-    public void echo(def o)
+    def echo(def o)
     {
         if (m_logging)
         {
@@ -56,11 +52,11 @@ public abstract class AbstractSpecification extends Specification
         }
         else
         {
-            println "" + o?.toString()
+            println("" + o?.toString())
         }
     }
 
-    public void oops(def o)
+    def oops(def o)
     {
         if (m_logging)
         {
@@ -68,7 +64,7 @@ public abstract class AbstractSpecification extends Specification
         }
         else
         {
-            err.println "" + o?.toString()
+            System.err.println("" + o?.toString())
         }
     }
 }

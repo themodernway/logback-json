@@ -25,7 +25,7 @@ import ch.qos.logback.core.spi.LifeCycle;
  * A {@code IJSONThrowableConverter} interface, which is a definition of classes that convert an {@link ILoggingEvent} to a {@link Supplier}.
  *
  * @author Dean S. Jones
- * @since 2.0.6-SNAPSHOT
+ * @since 2.0.0-RELEASE
  */
 
 public interface IJSONThrowableConverter extends LifeCycle
@@ -37,5 +37,5 @@ public interface IJSONThrowableConverter extends LifeCycle
      * @return a {@link Supplier} from the {@link ILoggingEvent}.
      */
 
-    public Supplier<Object> supplier(final ILoggingEvent event);
+    public Supplier<Object> supplier(ILoggingEvent event);
 }

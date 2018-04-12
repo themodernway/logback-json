@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration>
 <!-- 
 /*
  * Copyright (c) 2018, The Modern Way. All rights reserved.
@@ -23,11 +24,6 @@
 			<layout class="com.themodernway.logback.json.core.layout.JSONLayout">
 				<JSONFormatter class="com.themodernway.logback.json.core.test.util.TestJSONFormatter" />
 				<JSONLayoutEnhancer class="com.themodernway.logback.json.core.test.util.TestJSONLayoutEnhancer" />
-				<ShowThreadName>false</ShowThreadName>
-				<ShowContextName>false</ShowContextName>
-				<TimeZone>GMT</TimeZone>
-				<MDCLabel>state</MDCLabel>
-				<Pretty>false</Pretty>
 			</layout>
 			<charset>UTF-8</charset>
 		</encoder>

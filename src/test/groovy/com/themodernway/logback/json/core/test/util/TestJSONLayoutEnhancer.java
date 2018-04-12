@@ -27,17 +27,17 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 
 public class TestJSONLayoutEnhancer implements JSONLayoutEnhancer, IJSONCommon
 {
-    public static final String COMPUTE_HOSTNAME       = localhost();
+    private static final String COMPUTE_HOSTNAME       = localhost();
 
-    public static final String DEFAULT_HOSTNAME       = "localhost";
+    private static final String DEFAULT_HOSTNAME       = "localhost";
 
-    public static final String DEFAULT_HOSTNAME_LABEL = "host_name";
+    private static final String DEFAULT_HOSTNAME_LABEL = "host_name";
 
-    private boolean            m_show_host_name       = true;
+    private boolean             m_show_host_name       = true;
 
-    private String             m_host_name            = COMPUTE_HOSTNAME;
+    private String              m_host_name            = COMPUTE_HOSTNAME;
 
-    private String             m_host_name_label      = DEFAULT_HOSTNAME_LABEL;
+    private String              m_host_name_label      = DEFAULT_HOSTNAME_LABEL;
 
     private static final String localhost()
     {

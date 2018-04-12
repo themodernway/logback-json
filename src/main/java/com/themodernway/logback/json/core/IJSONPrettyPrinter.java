@@ -20,7 +20,7 @@ package com.themodernway.logback.json.core;
  * A {@code IJSONPrettyPrinter} interface, which defines if pretty printing is on or off.
  *
  * @author Dean S. Jones
- * @since 2.0.6-SNAPSHOT
+ * @since 2.0.0-RELEASE
  */
 
 public interface IJSONPrettyPrinter
@@ -39,5 +39,5 @@ public interface IJSONPrettyPrinter
      * @param pretty <tt>true</tt> or <tt>false</tt> for pretty printing mode.
      */
 
-    public void setPretty(final boolean pretty);
+    public void setPretty(boolean pretty);
 }

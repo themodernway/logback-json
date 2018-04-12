@@ -30,7 +30,7 @@ public class JSONThrowableListConverter implements IJSONThrowableConverter, IJSO
 {
     private int                             m_maxdeep;
 
-    private boolean                         m_started = false;
+    private boolean                         m_started;
 
     private final ThreadLocal<List<String>> m_getlist = ThreadLocal.withInitial(() -> new JSONThrowableList(32));
 
@@ -68,19 +68,19 @@ public class JSONThrowableListConverter implements IJSONThrowableConverter, IJSO
 
     protected List<String> recursive(final List<String> list, final IThrowableProxy prox, final int deep)
     {
-        if ((null == prox) || (deep >= getMaxDepth()))
+        if ((isNull(prox)) || (deep >= getMaxDepth()))
         {
             return list;
         }
         final IThrowableProxy caus = prox.getCause();
 
-        if (null != caus)
+        if (noNull(caus))
         {
             recursive(list, caus, deep + 1);
         }
         final String mess = prox.getMessage();
 
-        if (null == mess)
+        if (isNull(mess))
         {
             list.add(prox.getClassName());
         }
@@ -92,7 +92,7 @@ public class JSONThrowableListConverter implements IJSONThrowableConverter, IJSO
 
         final IThrowableProxy[] supp = prox.getSuppressed();
 
-        if (null != supp)
+        if (noNull(supp))
         {
             final int size = supp.length;
 
@@ -108,7 +108,7 @@ public class JSONThrowableListConverter implements IJSONThrowableConverter, IJSO
     {
         final StackTraceElementProxy[] elements = prox.getStackTraceElementProxyArray();
 
-        if (null != elements)
+        if (noNull(elements))
         {
             final int size = elements.length;
 

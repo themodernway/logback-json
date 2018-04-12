@@ -24,7 +24,7 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
  * A {@code JSONLayoutEnhancer} interface.
  *
  * @author Dean S. Jones
- * @since 2.0.6-SNAPSHOT
+ * @since 2.0.0-RELEASE
  */
 
 public interface JSONLayoutEnhancer

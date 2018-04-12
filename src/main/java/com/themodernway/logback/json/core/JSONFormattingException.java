@@ -20,7 +20,7 @@ package com.themodernway.logback.json.core;
  * A {@code JSONFormattingException} is a subclass of {@link Exception}.
  *
  * @author Dean S. Jones
- * @since 2.0.6-SNAPSHOT
+ * @since 2.0.0-RELEASE
  */
 
 public class JSONFormattingException extends Exception

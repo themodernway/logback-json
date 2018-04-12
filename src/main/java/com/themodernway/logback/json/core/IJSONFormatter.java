@@ -22,7 +22,7 @@ import java.util.Map;
  * A {@code IJSONFormatter} interface formats an object into a JSON string.
  *
  * @author Dean S. Jones
- * @since 2.0.6-SNAPSHOT
+ * @since 2.0.0-RELEASE
  */
 
 public interface IJSONFormatter extends IJSONPrettyPrinter

@@ -34,7 +34,7 @@ import ch.qos.logback.core.LayoutBase;
  * A {@code JSONLayout} is a subclass of {@link LayoutBase}.
  *
  * @author Dean S. Jones
- * @since 2.0.6-SNAPSHOT
+ * @since 2.0.0-RELEASE
  */
 
 public class JSONLayout extends LayoutBase<ILoggingEvent> implements IJSONLayout<ILoggingEvent>
@@ -43,9 +43,9 @@ public class JSONLayout extends LayoutBase<ILoggingEvent> implements IJSONLayout
 
     private ZoneId                  m_timezone                = DEFAULT_TIMEZONE_VALUE;
 
-    private JSONLayoutEnhancer      m_enhancer;
+    private JSONLayoutEnhancer      m_enhancer                = NULL();
 
-    private IJSONFormatter          m_formatter;
+    private IJSONFormatter          m_formatter               = NULL();
 
     private boolean                 m_is_pretty               = true;
 
@@ -95,11 +95,19 @@ public class JSONLayout extends LayoutBase<ILoggingEvent> implements IJSONLayout
 
     private IJSONThrowableConverter m_jsonthrowable_converter = new JSONThrowableListConverter();
 
-    private DateTimeFormatter       m_json_datetime_formatter;
+    private DateTimeFormatter       m_json_datetime_formatter = NULL();
 
     public JSONLayout()
     {
         setPretty(false);
+
+        setShowMDC(false);
+
+        setShowUniqueId(false);
+
+        setShowArguments(false);
+
+        setShowRawMessage(false);
 
         setShowThreadName(false);
 
@@ -111,13 +119,13 @@ public class JSONLayout extends LayoutBase<ILoggingEvent> implements IJSONLayout
     {
         final IJSONFormatter formatter = getJSONFormatter();
 
-        if (null != formatter)
+        if (noNull(formatter))
         {
             formatter.setPretty(isPretty());
         }
         final IJSONThrowableConverter converter = getJSONThrowableConverter();
 
-        if (null != converter)
+        if (noNull(converter))
         {
             converter.start();
         }
@@ -133,7 +141,7 @@ public class JSONLayout extends LayoutBase<ILoggingEvent> implements IJSONLayout
 
         final IJSONThrowableConverter converter = getJSONThrowableConverter();
 
-        if (null != converter)
+        if (noNull(converter))
         {
             converter.stop();
         }
@@ -154,13 +162,15 @@ public class JSONLayout extends LayoutBase<ILoggingEvent> implements IJSONLayout
         }
         final Map<String, Object> target = convertEvent(event);
 
-        if ((null == target) || (target.isEmpty()))
+        if ((isNull(target)) || (target.isEmpty()))
         {
             addError("null or empty converted event.");
 
             return EMPTY_STRING;
         }
-        if (null == getJSONFormatter())
+        final IJSONFormatter formatter = getJSONFormatter();
+
+        if (isNull(formatter))
         {
             addError("null JSONFormatter.");
 
@@ -168,7 +178,7 @@ public class JSONLayout extends LayoutBase<ILoggingEvent> implements IJSONLayout
         }
         try
         {
-            return getJSONFormatter().toJSONString(target) + LINE_SEPARATOR_STRING;
+            return formatter.toJSONString(target) + LINE_SEPARATOR_STRING;
         }
         catch (final JSONFormattingException e)
         {
@@ -185,7 +195,7 @@ public class JSONLayout extends LayoutBase<ILoggingEvent> implements IJSONLayout
 
         final JSONLayoutEnhancer enhance = getJSONLayoutEnhancer();
 
-        if (null != enhance)
+        if (noNull(enhance))
         {
             enhance.before(target, this, event);
         }
@@ -209,9 +219,9 @@ public class JSONLayout extends LayoutBase<ILoggingEvent> implements IJSONLayout
 
         append(target, toTrimOrElse(getMDCLabel(), DEFAULT_MDC_LABEL), getShowMDC(), event::getMDCPropertyMap);
 
-        append(target, toTrimOrElse(getExceptionLabel(), DEFAULT_EXCEPTION_LABEL), getShowException() && (null != event.getThrowableProxy()), getJSONThrowableConverter().supplier(event));
+        append(target, toTrimOrElse(getExceptionLabel(), DEFAULT_EXCEPTION_LABEL), getShowException() && (noNull(event.getThrowableProxy())), getJSONThrowableConverter().supplier(event));
 
-        if (null != enhance)
+        if (noNull(enhance))
         {
             enhance.finish(target, this, event);
         }

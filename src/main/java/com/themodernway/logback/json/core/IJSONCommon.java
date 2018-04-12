@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -29,7 +30,7 @@ import java.util.function.Supplier;
  * A {@code IJSONCommon} interface that has common methods and constants.
  *
  * @author Dean S. Jones
- * @since 2.0.6-SNAPSHOT
+ * @since 2.0.0-RELEASE
  */
 
 public interface IJSONCommon
@@ -72,6 +73,21 @@ public interface IJSONCommon
 
     public static final ZoneId DEFAULT_TIMEZONE_VALUE          = ZoneId.of(ZONE_STRING_VALUE);
 
+    default <T> T NULL()
+    {
+        return null;
+    }
+
+    default boolean isNull(final Object valu)
+    {
+        return Objects.isNull(valu);
+    }
+
+    default boolean noNull(final Object valu)
+    {
+        return Objects.nonNull(valu);
+    }
+
     default String uuid()
     {
         return UUID.randomUUID().toString();
@@ -79,7 +95,7 @@ public interface IJSONCommon
 
     default <T, R> R nullOrOtherwise(final T valu, final Function<T, R> otherwise)
     {
-        return ((null == valu) ? null : otherwise.apply(valu));
+        return (isNull(valu) ? NULL() : otherwise.apply(valu));
     }
 
     default List<Object> asList(final boolean empty, final Object[] args)
@@ -90,7 +106,7 @@ public interface IJSONCommon
     @SuppressWarnings("unchecked")
     default <T> List<T> toList(final T... args)
     {
-        return ((null == args) ? Collections.emptyList() : Arrays.asList(args));
+        return (isNull(args) ? Collections.emptyList() : Arrays.asList(args));
     }
 
     @SuppressWarnings("unchecked")
@@ -98,45 +114,45 @@ public interface IJSONCommon
     {
         final List<T> list = toList(args);
 
-        return (((false == empty) && (list.isEmpty())) ? null : list);
+        return ((false == empty) && (list.isEmpty()) ? NULL() : list);
     }
 
     default <T> List<T> toListOrNull(final List<T> list)
     {
-        return (((null == list) || (list.isEmpty())) ? null : list);
+        return ((isNull(list)) || (list.isEmpty()) ? NULL() : list);
     }
 
     default String toString(final Object valu)
     {
-        return ((null != valu) ? valu.toString() : NULL_STRING_VALUE);
+        return (isNull(valu) ? NULL_STRING_VALUE : valu.toString());
     }
 
     default String toStringOrNull(final Object valu)
     {
-        return ((null != valu) ? valu.toString() : null);
+        return (isNull(valu) ? NULL() : valu.toString());
     }
 
     default String toStringOrElse(final Object valu, final String otherwise)
     {
-        return ((null != valu) ? valu.toString() : otherwise);
+        return (isNull(valu) ? otherwise : valu.toString());
     }
 
     default String toStringOrElse(final Object valu, final Supplier<String> otherwise)
     {
-        return ((null != valu) ? valu.toString() : otherwise.get());
+        return (isNull(valu) ? otherwise.get() : valu.toString());
     }
 
     default String toTrimOrNull(String string)
     {
-        if ((null == string) || (string.isEmpty()))
+        if ((isNull(string)) || (string.isEmpty()))
         {
-            return null;
+            return NULL();
         }
         string = string.trim();
 
         if (string.isEmpty())
         {
-            return null;
+            return NULL();
         }
         return string;
     }
@@ -153,12 +169,12 @@ public interface IJSONCommon
 
     default <T> T requireNonNullOrElse(final T valu, final T otherwise)
     {
-        return ((null != valu) ? valu : otherwise);
+        return (isNull(valu) ? otherwise : valu);
     }
 
     default <T> T requireNonNullOrElse(final T valu, final Supplier<T> otherwise)
     {
-        return ((null != valu) ? valu : otherwise.get());
+        return (isNull(valu) ? otherwise.get() : valu);
     }
 
     default void append(final Map<String, Object> target, final String name, final boolean flag, final Supplier<Object> supplier)
@@ -167,11 +183,11 @@ public interface IJSONCommon
         {
             final String labl = toTrimOrNull(name);
 
-            if (null != labl)
+            if (false == isNull(labl))
             {
                 final Object valu = supplier.get();
 
-                if (null != valu)
+                if (false == isNull(valu))
                 {
                     target.put(labl, valu);
                 }

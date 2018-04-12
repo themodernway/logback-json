@@ -48,7 +48,7 @@ public class TestJSONFormatter extends ObjectMapper implements IJSONFormatter, I
 
     private static final DefaultPrettyPrinter PRETTY_PRINTER   = buildPrettyPrinter();
 
-    public static final DefaultPrettyPrinter buildPrettyPrinter()
+    private static final DefaultPrettyPrinter buildPrettyPrinter()
     {
         return new DefaultPrettyPrinter().withArrayIndenter(new DefaultIndenter().withIndent(JSON_INDENT_VALUE)).withObjectIndenter(new DefaultIndenter().withIndent(JSON_INDENT_VALUE));
     }
