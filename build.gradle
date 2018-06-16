@@ -23,7 +23,7 @@ buildscript {
         classpath(group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.5')
         classpath(group: 'org.fusesource.jansi', name: 'jansi', version: '1.17')
         classpath(group: 'org.codehaus.groovy', name: 'groovy-all', version: '2.4.15', classifier: 'indy')
-        classpath(group: 'org.owasp', name: 'dependency-check-gradle', version: '3.1.2')
+        classpath(group: 'org.owasp', name: 'dependency-check-gradle', version: '3.2.0')
         classpath(group: 'org.sonarsource.scanner.gradle', name: 'sonarqube-gradle-plugin', version: '2.6.2')
     }
 }
@@ -50,7 +50,7 @@ sourceCompatibility = 1.8
 
 targetCompatibility = 1.8
 
-version = '2.0.0-RELEASE'
+version = '2.0.1-RELEASE'
 
 group = 'com.themodernway'
 
@@ -242,11 +242,11 @@ sourceSets {
 
 dependencies {
     compile(group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3')
-    testCompile(group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.9.5')
-    testCompile(group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.5')
-    testCompile(group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.9.5')
-    testCompile(group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8', version: '2.9.5')
-    testCompile(group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.5')
+    testCompile(group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.9.6')
+    testCompile(group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.6')
+    testCompile(group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.9.6')
+    testCompile(group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8', version: '2.9.6')
+    testCompile(group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.6')
     testCompile(group: 'org.codehaus.groovy', name: 'groovy-all', version: '2.4.15', classifier: 'indy')
     testCompile(group: 'org.spockframework', name: 'spock-core', version: '1.1-groovy-2.4') {
         exclude(group: 'org.codehaus.groovy', module: 'groovy-all')
